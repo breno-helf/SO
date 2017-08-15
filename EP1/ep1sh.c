@@ -21,15 +21,13 @@ void make_prompt(char * prompt_str) {
     prompt_str[0] = '[';
     getcwd(prompt_str + 1, MAX - 4);
     strcat(prompt_str, "]$ ");
-    prompt_str[strlen(prompt_str)] = '\0';
 }
 
 /*
   Count the number of arguments in a command
 */
 int args_num(char * str) {
-    int i;
-    int number = 0;
+    int number = 0, i;
 
     for (i = 0; str[i] != '\0'; i++) {
 	if (str[i] != ' ' && (i == 0 || str[i - 1] == ' '))
@@ -43,8 +41,8 @@ int args_num(char * str) {
   is a vector of strings (command + arguments).
 */
 void make_command(char * str, char ** command) {
-    int number = 0;
-    int i;
+    int number = 0, i;
+
     for (i = 0; str[i] != '\0'; i++) {
 	if (str[i] == ' ')
 	    str[i] = '\0';
@@ -77,6 +75,10 @@ void change_owner_group(char *gr, char *file) {
     free(dir);
 }
 
+/*
+  Creates a child process that execute a
+  command with execv.
+*/
 void execute_command(char * dir, char * args[]) { 
     pid_t pid;
     int status;
@@ -114,37 +116,16 @@ int main(int argc, char * argv[]) {
 	if (strcmp(command[0], "exit") == 0) {
 	    loop = 0;
 	} else if (strcmp(command[0], "chown") == 0) {
-	    /*
-	      Teste:   
-	      chown :mysql in
-	    */
 	    change_owner_group(command[1], command[2]);
 	} else if (strcmp(command[0], "date") == 0) {
-	    /*
-	      Imprimir o dia
-	      de hoje
-	    */	    
 	    time_t * now = (time_t *) malloc(sizeof(time_t));
 	    time(now);
 	    printf("%s", ctime(now));
 	} else if (strcmp(command[0], "/bin/ping") == 0) {
-	    /*
-	      Mandar pacotes para o
-	      link desejado
-	    */
-	    
 	    execute_command(command[0], command);	    
 	} else if (strcmp(command[0], "/usr/bin/cal") == 0) {
-	    /*
-	      Imprimir calendário
-	      do ano dado
-	    */
 	    execute_command(command[0], command);	    
 	} else if (strcmp(command[0], "./ep1") == 0) {
-	    /*
-	      Rodar o simulador de 
-	      processos
-	    */
 	    execute_command(command[0], command);	    
 	} else {
 	    fprintf(stderr, "Command %s not supported\n", str);
@@ -153,5 +134,8 @@ int main(int argc, char * argv[]) {
 	free(str);
 	free(command);
     }
+
+    free(prompt);
+    
     return 0;
 }
