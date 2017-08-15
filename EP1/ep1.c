@@ -2,14 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <errno.h>
-
-int shortest_process_cmp(const void * p1, const void * p2) {
-    double t1 = ((process * )p1)->dt;
-    double t2 = ((process * )p2)->dt;
-    if (t1 > t2) return 1;
-    if (t1 < t2) return -1;
-    return 0;
-}
+#include "process.h"
 
 int main(int argc, char * argv[]) {
     int type = 0;
@@ -24,7 +17,9 @@ int main(int argc, char * argv[]) {
     }
 
     type = atoi(argv[1]);
-
+    input_name = argv[2];
+    output_name = argv[3];
+    
     if (type < 1 || type > 3) {
 	fprintf(stderr, "Type not supported, the supported types are:\n");
 	fprintf(stderr, "1. Shortest Job First\n");
@@ -32,5 +27,28 @@ int main(int argc, char * argv[]) {
 	fprintf(stderr, "3. Scheduling with Priority\n");
 
 	return -1;
+    }
+
+    input = fopen(input_name, "r");
+    output = fopen(output_name, "w");
+
+    if (input == NULL) {
+	fprintf(stderr, "Fatal error: Failed to open file %s\n", input_name);
+	return -1;
+    }
+
+    if (output == NULL) {
+	fprintf(stderr, "Fatal error: Failed to open file %s\n", output_name);
+	return -1;
+    }
+
+    process * v;
+    int cur_pos, cur_size, complete_process, context_change;
+
+    start_vector(&v, &cur_pos, &cur_size, &complete_process, &context_change);
+    read_trace(input, &v, &cur_pos, &cur_size);
+
+    for (int i = 0; i < cur_pos; i++) {
+	fprintf (stderr, "%lf %lf %lf %s\n", v[i].t0, v[i].dt, v[i].deadline, v[i].name);
     }
 }

@@ -8,14 +8,24 @@ int shortest_process_cmp(const void * p1, const void * p2) {
     return 0;
 }
 
-void start_vector(process * v, int * cur_pos, int * cur_size,
+process * build_process(double t0, double dt, double deadline,
+		   char * name) {
+    process * p;
+    p = (process *) malloc(sizeof(process));
+    p->t0 = t0;
+    p->dt = dt;
+    p->deadline = deadline;
+    p->name = name;
+    return p;
+}
+void start_vector(process ** v, int * cur_pos, int * cur_size,
 		  int * complete_process, int * context_change) {
     *cur_pos = 0;
     *cur_size = START_SIZE;
     *complete_process = 0;
     *context_change = 0;
     
-    v = (process *) malloc(sizeof(process) * START_SIZE);
+    *v = (process *) malloc(sizeof(process) * START_SIZE);
 }
 
 void double_size(process ** v, int * cur_size) {
@@ -30,25 +40,25 @@ void double_size(process ** v, int * cur_size) {
     free(temp);
 }
 
-void push_process(process * v, int * cur_pos, int * cur_size,
+void push_process(process ** v, int * cur_pos, int * cur_size,
 		  process p) {
 
     int i = *cur_pos;
     int n = *cur_size;
     
     if (i == n) {
-	double_size(&v, cur_size);
+	double_size(v, cur_size);
     }
 
     int name_size = strlen(p.name);
     
-    v[i].t0 = p.t0;
-    v[i].dt = p.dt;
-    v[i].deadline = p.deadline;
+    (*v)[i].t0 = p.t0;
+    (*v)[i].dt = p.dt;
+    (*v)[i].deadline = p.deadline;
     
-    v[i].name = (char *) malloc(sizeof(char) * (name_size + 1));
+    (*v)[i].name = (char *) malloc(sizeof(char) * (name_size + 1));
 
-    strcpy(v[i].name, name);
+    strcpy((*v)[i].name, p.name);
     
     (*cur_pos) = i + 1;    
 }
@@ -64,7 +74,16 @@ void free_vector(process *v, int * cur_pos, int * cur_size) {
     *cur_size = 0;
 }
 
-void read_trace(FILE * trace, process * v, int * cur_pos,
+void read_trace(FILE * trace, process ** v, int * cur_pos,
 		int * cur_size) {
-
+    char *name;
+    double t0, dt, deadline;
+    name = (char *) malloc(sizeof(char) * MAX_SIZE);
+    while (fscanf(trace, "%lf %lf %lf %s", &t0, &dt, &deadline, name) != EOF) {
+	process * p;
+	p = build_process(t0, dt, deadline, name);
+	push_process(v, cur_pos, cur_size, * p);
+	free(p);
+    }
+    free(name);
 }
