@@ -8,6 +8,15 @@ int shortest_process_cmp(const void * p1, const void * p2) {
     return 0;
 }
 
+int highest_priority_cmp(const void * p1, const void * p2) {
+    double d1 = ((process * )p1)->deadline;
+    double d2 = ((process * )p2)->deadline;
+
+    if (d1 > d2) return 1;
+    if (d1 < d2) return -1;
+    return 0;
+}
+
 process * build_process(double t0, double dt, double deadline,
 		   char * name) {
     process * p;

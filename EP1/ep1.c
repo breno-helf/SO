@@ -47,8 +47,12 @@ int main(int argc, char * argv[]) {
 
     start_vector(&v, &cur_pos, &cur_size, &complete_process, &context_change);
     read_trace(input, &v, &cur_pos, &cur_size);
-
+    /*
+      qsort(v, cur_pos, sizeof(process), shortest_process_cmp);
+      qsort(v, cur_pos, sizeof(process), highest_priority_cmp);
+    */
     for (int i = 0; i < cur_pos; i++) {
 	fprintf (stderr, "%lf %lf %lf %s\n", v[i].t0, v[i].dt, v[i].deadline, v[i].name);
     }
+    free_vector(v, &cur_pos, &cur_size);
 }
