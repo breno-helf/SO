@@ -11,20 +11,20 @@ typedef struct {
     double t0;
     double dt;
     double deadline;
-    char * name;    
+    char * name;
 } process;
 
-/*
-  Comparator for sorting the process acording to
-  the shortest processing time.
-*/
+/**
+ * Comparator for sorting the process acording to
+ * the shortest processing time.
+ */
 int shortest_process_cmp(const void * p1, const void * p2);
 
-/*
-  Comparator for sorting the process acording to
-  the highest priority, that is the one with the
-  earliest deadline.
-*/
+/**
+ * Comparator for sorting the process acording to
+ * the highest priority, that is the one with the
+ * earliest deadline.
+ */
 int highest_priority_cmp(const void * p1, const void * p2);
 
 /*

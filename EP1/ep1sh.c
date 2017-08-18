@@ -135,6 +135,7 @@ int main(int argc, char * argv[]) {
 	free(command);
     }
 
+    clear_history();
     free(prompt);
     
     return 0;
