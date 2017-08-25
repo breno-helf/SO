@@ -3,6 +3,17 @@
 #include <unistd.h>
 #include <errno.h>
 #include "process.h"
+#include <pthread.h>
+
+void *t_func(void *arg) {
+    float secs = *((float*) arg);
+    struct timespec t;
+    t.tv_sec = (int) secs;
+    secs -= t.tv_sec;
+    t.tv_nsec = secs * 1000000000;
+    nanosleep(&t, NULL);
+    return NULL;
+}
 
 int main(int argc, char * argv[]) {
     int type = 0;
@@ -51,6 +62,14 @@ int main(int argc, char * argv[]) {
       qsort(v, cur_pos, sizeof(process), shortest_process_cmp);
       qsort(v, cur_pos, sizeof(process), highest_priority_cmp);
     */
+    if (type == 1) {
+        qsort(v, cur_pos, sizeof(process), shortest_process_cmp);
+        for(int i = 0; i < cur_pos; i++) {
+            void *pt = &(v[i].dt);
+            pthread_create(v[i].thread, NULL, t_func, pt);
+            pthread_join(*(v[i].thread), NULL);
+        }
+    }
     for (int i = 0; i < cur_pos; i++) {
 	fprintf (stderr, "%lf %lf %lf %s\n", v[i].t0, v[i].dt, v[i].deadline, v[i].name);
     }

@@ -1,4 +1,4 @@
-FLAGS = -Wall -pedantic -g -std=c99 -D _POSIX_C_SOURCE=199309L
+FLAGS = -pthread -Wall -pedantic -g -std=c99 -D _POSIX_C_SOURCE=199309L
 FILES = ep1sh ep1
 OBJS = process.o
 

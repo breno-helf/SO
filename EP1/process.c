@@ -21,6 +21,8 @@ process * build_process(double t0, double dt, double deadline,
 		   char * name) {
     process * p;
     p = (process *) malloc(sizeof(process));
+    p->mutex = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
+    p->thread = (pthread_t *) malloc(sizeof(pthread_t));
     p->t0 = t0;
     p->dt = dt;
     p->deadline = deadline;
