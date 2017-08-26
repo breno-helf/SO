@@ -6,7 +6,7 @@
 #include <pthread.h>
 
 void *t_func(void *arg) {
-    float secs = *((float*) arg);
+    float secs = *((double*) arg);
     struct timespec t;
     t.tv_sec = (int) secs;
     secs -= t.tv_sec;
@@ -16,6 +16,7 @@ void *t_func(void *arg) {
 }
 
 int main(int argc, char * argv[]) {
+    int db = 0;
     int type = 0;
     char * input_name;
     char * output_name;
@@ -64,6 +65,14 @@ int main(int argc, char * argv[]) {
     */
     if (type == 1) {
         qsort(v, cur_pos, sizeof(process), shortest_process_cmp);
+        for(int i = 0; i < cur_pos; i++) {
+            void *pt = &(v[i].dt);
+            pthread_create(v[i].thread, NULL, t_func, pt);
+            pthread_join(*(v[i].thread), NULL);
+        }
+    }
+    if (type == 3) {
+        qsort(v, cur_pos, sizeof(process), highest_priority_cmp);
         for(int i = 0; i < cur_pos; i++) {
             void *pt = &(v[i].dt);
             pthread_create(v[i].thread, NULL, t_func, pt);

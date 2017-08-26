@@ -21,8 +21,6 @@ process * build_process(double t0, double dt, double deadline,
 		   char * name) {
     process * p;
     p = (process *) malloc(sizeof(process));
-    p->mutex = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
-    p->thread = (pthread_t *) malloc(sizeof(pthread_t));
     p->t0 = t0;
     p->dt = dt;
     p->deadline = deadline;
@@ -66,6 +64,8 @@ void push_process(process ** v, int * cur_pos, int * cur_size,
     (*v)[i].t0 = p.t0;
     (*v)[i].dt = p.dt;
     (*v)[i].deadline = p.deadline;
+    (*v)[i].mutex = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
+    (*v)[i].thread = (pthread_t *) malloc(sizeof(pthread_t));
     
     (*v)[i].name = (char *) malloc(sizeof(char) * (name_size + 1));
 
