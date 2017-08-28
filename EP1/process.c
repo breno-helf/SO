@@ -1,24 +1,15 @@
 #include "process.h"
 
-int shortest_process_cmp(const void * p1, const void * p2) {
-    double t1 = ((process * )p1)->dt;
-    double t2 = ((process * )p2)->dt;
+int first_coming_cmp(const void * p1, const void * p2) {
+    double t1 = ((process * )p1)->t0;
+    double t2 = ((process * )p2)->t0;
     if (t1 > t2) return 1;
     if (t1 < t2) return -1;
     return 0;
 }
 
-int highest_priority_cmp(const void * p1, const void * p2) {
-    double d1 = ((process * )p1)->deadline;
-    double d2 = ((process * )p2)->deadline;
-
-    if (d1 > d2) return 1;
-    if (d1 < d2) return -1;
-    return 0;
-}
-
 process * build_process(double t0, double dt, double deadline,
-		   char * name) {
+			char * name) {
     process * p;
     p = (process *) malloc(sizeof(process));
     p->t0 = t0;

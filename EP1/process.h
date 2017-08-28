@@ -14,18 +14,13 @@ typedef struct {
     char * name;
 } process;
 
-/**
- * Comparator for sorting the process acording to
- * the shortest processing time.
- */
-int shortest_process_cmp(const void * p1, const void * p2);
+int change_of_context = 0;
 
 /**
  * Comparator for sorting the process acording to
- * the highest priority, that is the one with the
- * earliest deadline.
+ * the time that it arrives at the processor.
  */
-int highest_priority_cmp(const void * p1, const void * p2);
+int first_coming_cmp(const void * p1, const void * p2);
 
 /*
   Build process based on arguments t0, dt, deadline

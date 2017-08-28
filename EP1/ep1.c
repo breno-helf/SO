@@ -3,9 +3,10 @@
 #include <unistd.h>
 #include <errno.h>
 #include "process.h"
+#include "event.h"
 
 int main(int argc, char * argv[]) {
-    int type = 0;
+    int i, type = 0;
     char * input_name;
     char * output_name;
     FILE * input;
@@ -28,7 +29,11 @@ int main(int argc, char * argv[]) {
 
 	return -1;
     }
-
+    
+    if (argc > 4 && strcmp(argv[4], "d")) {
+	show_event = 1;
+    } 
+    
     input = fopen(input_name, "r");
     output = fopen(output_name, "w");
 
@@ -47,12 +52,25 @@ int main(int argc, char * argv[]) {
 
     start_vector(&v, &cur_pos, &cur_size, &complete_process, &context_change);
     read_trace(input, &v, &cur_pos, &cur_size);
-    /*
-      qsort(v, cur_pos, sizeof(process), shortest_process_cmp);
-      qsort(v, cur_pos, sizeof(process), highest_priority_cmp);
-    */
-    for (int i = 0; i < cur_pos; i++) {
+    
+    qsort(v, cur_pos, sizeof(process), first_coming_cmp);
+   
+    for (i = 0; i < cur_pos; i++) {
 	fprintf (stderr, "%lf %lf %lf %s\n", v[i].t0, v[i].dt, v[i].deadline, v[i].name);
     }
+    
+    if (type == 1) {
+	shortest(v, cur_pos);
+    } else if (type == 2) {
+	round_robin(v, cur_pos);
+    } else {
+	priority(v, cur_pos);
+    }
+    
     free_vector(v, &cur_pos, &cur_size);
+    fclose(input);
+    fclose(output);
+
+
+    return 0;
 }
