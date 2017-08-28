@@ -1,6 +1,10 @@
+#ifndef HEAP
+#define HEAP
+
 #include <stdio.h>
 #include <stdlib.h>
-x
+#include "process.h"
+
 #define MAX_SZ 1123
 #define ST_SZ 2
 
@@ -8,7 +12,7 @@ x
 
 typedef struct {
     double val;
-    void * key;
+    process * key;
 } node;
 
 typedef struct {
@@ -21,11 +25,13 @@ typedef heap * Heap;
 
 Heap heap_start();
 
+int heap_empty(Heap H);
+
 void heap_free(Heap H);
 
-void heap_push(Heap H, double val, void * key);
+void heap_push(Heap H, double val, process * key);
 
-void * heap_top(Heap H);
+process * heap_top(Heap H);
 
 void heap_pop(Heap H);
 
@@ -34,3 +40,5 @@ void heap_go_up(Heap H);
 void heap_go_down(Heap H);
 
 void heap_swap(Heap H, int a, int b);
+
+#endif

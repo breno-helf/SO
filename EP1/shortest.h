@@ -1,3 +1,6 @@
+#ifndef SHORTEST
+#define SHORTEST
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -7,5 +10,9 @@
 
 #include "event.h"
 #include "process.h"
+#include "heap.h"
+#include "clock.h"
 
 void shortest(process * v, int n);
+
+#endif

@@ -1,7 +1,11 @@
+#ifndef EVENT
+#define EVENT
+
 #include <stdio.h>
 #include <stdlib.h>
 
-int show_event = 0;
+static int show_event = 0;
 
-#define event(args...) { if (show_event) { fprintf(stderr, args); } }
+#define event(...) { if (show_event) { fprintf(stderr, __VA_ARGS__); } }
 
+#endif

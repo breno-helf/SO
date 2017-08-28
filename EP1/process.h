@@ -1,3 +1,6 @@
+#ifndef PROCESS
+#define PROCESS
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -8,13 +11,12 @@
 #define START_SIZE 2
 
 typedef struct {
+    int id;
     double t0;
     double dt;
     double deadline;
     char * name;
 } process;
-
-int change_of_context = 0;
 
 /**
  * Comparator for sorting the process acording to
@@ -26,7 +28,7 @@ int first_coming_cmp(const void * p1, const void * p2);
   Build process based on arguments t0, dt, deadline
   and name. Return a pointer to the process created.
 */
-process * build_process(double t0, double dt, double deadline,
+process * build_process(int id, double t0, double dt, double deadline,
 		   char * name);
 /*
   Creates a vector of the process struct.
@@ -56,3 +58,4 @@ void free_vector(process *v, int * cur_pos, int * cur_size);
 */
 void read_trace(FILE * trace, process ** v, int * cur_pos,
 		int * cur_size);
+#endif

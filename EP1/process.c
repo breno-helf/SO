@@ -8,10 +8,11 @@ int first_coming_cmp(const void * p1, const void * p2) {
     return 0;
 }
 
-process * build_process(double t0, double dt, double deadline,
+process * build_process(int id, double t0, double dt, double deadline,
 			char * name) {
     process * p;
     p = (process *) malloc(sizeof(process));
+    p->id = id;
     p->t0 = t0;
     p->dt = dt;
     p->deadline = deadline;
@@ -51,7 +52,8 @@ void push_process(process ** v, int * cur_pos, int * cur_size,
     }
 
     int name_size = strlen(p.name);
-    
+
+    (*v)[i].id = p.id;
     (*v)[i].t0 = p.t0;
     (*v)[i].dt = p.dt;
     (*v)[i].deadline = p.deadline;
@@ -77,12 +79,13 @@ void free_vector(process *v, int * cur_pos, int * cur_size) {
 void read_trace(FILE * trace, process ** v, int * cur_pos,
 		int * cur_size) {
     char *name;
-    double t0, dt, deadline;
+    double t0, dt, deadline, i = 0;
     name = (char *) malloc(sizeof(char) * MAX_SIZE);
     while (fscanf(trace, "%lf %lf %lf %s", &t0, &dt, &deadline, name) != EOF) {
 	process * p;
-	p = build_process(t0, dt, deadline, name);
+	p = build_process(i, t0, dt, deadline, name);
 	push_process(v, cur_pos, cur_size, * p);
+	i++;
 	free(p);
     }
     free(name);

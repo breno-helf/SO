@@ -4,6 +4,7 @@
 #include <errno.h>
 #include "process.h"
 #include "event.h"
+#include "shortest.h"
 
 int main(int argc, char * argv[]) {
     int i, type = 0;
@@ -62,9 +63,9 @@ int main(int argc, char * argv[]) {
     if (type == 1) {
 	shortest(v, cur_pos);
     } else if (type == 2) {
-	round_robin(v, cur_pos);
+	/* round_robin(v, cur_pos); */
     } else {
-	priority(v, cur_pos);
+	/* priority(v, cur_pos); */
     }
     
     free_vector(v, &cur_pos, &cur_size);

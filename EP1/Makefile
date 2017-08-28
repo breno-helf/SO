@@ -1,12 +1,12 @@
 FLAGS = -Wall -pedantic -g -std=c99 -D _POSIX_C_SOURCE=199309L
-FILES = ep1sh ep1
-OBJS = process.o
+FILES = ep1.c process.c process.h clock.c clock.h event.h heap.h heap.c shortest.c shortest.h
+EXEC = ep1sh ep1
 
 clear:
-	rm ${FILES} *~ a.out
+	rm ${EXEC} *~ a.out
 
 ep1sh: ep1sh.c
 	gcc ${FLAGS} -o ep1sh ep1sh.c -lreadline
 
-ep1: ep1.c process.c process.h
-	gcc ${FLAGS} -o ep1 ep1.c process.c
+ep1: ${FILES}
+	gcc ${FLAGS} -o ep1 ${FILES}

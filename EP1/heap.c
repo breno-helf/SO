@@ -10,6 +10,10 @@ Heap heap_start() {
     return H;
 }
 
+int heap_empty(Heap H) {
+    return (H->cur_pos == 0) ? 1 : 0;
+}
+
 void heap_free(Heap H) {
     while(H->cur_pos) heap_pop(H);
     free(H);
@@ -22,12 +26,12 @@ void heap_double(Heap H) {
 
     H->v = (node **) malloc(sizeof(node *) * H->cur_size);
 
-    for (int i = 0; i < old_size; i++)
+    for (i = 0; i < old_size; i++)
 	H->v[i] = temp[i];
     free(temp);    
 }
 
-void heap_push(Heap H, double val, void * key) {
+void heap_push(Heap H, double val, process * key) {
     node * N = (node *) malloc(sizeof(node));
 
     
@@ -42,7 +46,7 @@ void heap_push(Heap H, double val, void * key) {
     H->cur_pos++;    
 }
 
-void * heap_top(Heap H) {
+process * heap_top(Heap H) {
     return H->v[0]->key;
 }
 
@@ -69,7 +73,6 @@ void heap_go_up(Heap H) {
 
 void heap_go_down(Heap H) {
     int i = 0;
-    int down = 0;
     int sz = H->cur_pos;
     
     while (1) {
