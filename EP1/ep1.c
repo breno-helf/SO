@@ -2,10 +2,20 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <errno.h>
-#include "process.h"
+#include "linkedlist.h"
 #include <pthread.h>
 
-void *t_func(void *arg) {
+void *np_func(void *arg) {
+    float secs = *((double*) arg);
+    struct timespec t;
+    t.tv_sec = (int) secs;
+    secs -= t.tv_sec;
+    t.tv_nsec = secs * 1000000000;
+    nanosleep(&t, NULL);
+    return NULL;
+}
+
+void *np_func(void *arg) {
     float secs = *((double*) arg);
     struct timespec t;
     t.tv_sec = (int) secs;
@@ -24,8 +34,8 @@ int main(int argc, char * argv[]) {
     FILE * output;
     
     if (argc < 4) {
-	fprintf(stderr, "Fatal error: Not enough arguments\n");
-	return -1;
+	    fprintf(stderr, "Fatal error: Not enough arguments\n");
+	    return -1;
     }
 
     type = atoi(argv[1]);
@@ -33,25 +43,25 @@ int main(int argc, char * argv[]) {
     output_name = argv[3];
     
     if (type < 1 || type > 3) {
-	fprintf(stderr, "Type not supported, the supported types are:\n");
-	fprintf(stderr, "1. Shortest Job First\n");
-	fprintf(stderr, "2. Round Robin\n");
-	fprintf(stderr, "3. Scheduling with Priority\n");
+	    fprintf(stderr, "Type not supported, the supported types are:\n");
+	    fprintf(stderr, "1. Shortest Job First\n");
+	    fprintf(stderr, "2. Round Robin\n");
+	    fprintf(stderr, "3. Scheduling with Priority\n");
 
-	return -1;
+	    return -1;
     }
 
     input = fopen(input_name, "r");
     output = fopen(output_name, "w");
 
     if (input == NULL) {
-	fprintf(stderr, "Fatal error: Failed to open file %s\n", input_name);
-	return -1;
+	    fprintf(stderr, "Fatal error: Failed to open file %s\n", input_name);
+	    return -1;
     }
 
     if (output == NULL) {
-	fprintf(stderr, "Fatal error: Failed to open file %s\n", output_name);
-	return -1;
+	    fprintf(stderr, "Fatal error: Failed to open file %s\n", output_name);
+	    return -1;
     }
 
     process * v;
@@ -65,6 +75,13 @@ int main(int argc, char * argv[]) {
     */
     if (type == 1) {
         qsort(v, cur_pos, sizeof(process), shortest_process_cmp);
+        linkedlist *list = copy_array(v, cur_pos);
+        printf("cp%d\n", db++);
+        printf("%d\n", list->size);
+        while(list->size > 0) {
+            printf("%s\n", (list->header->val)->name);
+            pop(list);
+        }
         for(int i = 0; i < cur_pos; i++) {
             void *pt = &(v[i].dt);
             pthread_create(v[i].thread, NULL, t_func, pt);
@@ -80,7 +97,7 @@ int main(int argc, char * argv[]) {
         }
     }
     for (int i = 0; i < cur_pos; i++) {
-	fprintf (stderr, "%lf %lf %lf %s\n", v[i].t0, v[i].dt, v[i].deadline, v[i].name);
+	    fprintf (stderr, "%lf %lf %lf %s\n", v[i].t0, v[i].dt, v[i].deadline, v[i].name);
     }
     free_vector(v, &cur_pos, &cur_size);
 }
