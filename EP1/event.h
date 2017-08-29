@@ -3,9 +3,12 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
+#include <string.h>
 
-static int show_event = 0;
+static int show_event;
 
-#define event(...) { if (show_event) { fprintf(stderr, __VA_ARGS__); } }
+void event(const char * msg, ...);
+void update_show(int up);
 
 #endif

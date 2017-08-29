@@ -8,7 +8,6 @@
 #include <errno.h>
 #include <time.h>
 
-#include "event.h"
 #include "process.h"
 #include "heap.h"
 #include "clock.h"

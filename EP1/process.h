@@ -8,13 +8,19 @@
 #include <errno.h>
 #include <pthread.h>
 
+#include "event.h"
+
 #define MAX_SIZE 1123
 #define START_SIZE 2
+#define QUANTUM .1
+
 
 typedef struct {
     pthread_t *thread;
     pthread_mutex_t *mutex;
     int id;
+    char running;
+    char done;
     double t0;
     double dt;
     double deadline;
@@ -61,4 +67,9 @@ void free_vector(process *v, int * cur_pos, int * cur_size);
 */
 void read_trace(FILE * trace, process ** v, int * cur_pos,
 		int * cur_size);
+
+void create_thread(process * p);
+
+void * run_process(void * p);
+
 #endif

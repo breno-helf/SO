@@ -12,6 +12,8 @@ process * build_process(int id, double t0, double dt, double deadline,
 			char * name) {
     process * p;
     p = (process *) malloc(sizeof(process));
+    p->done = 0;
+    p->running = 0;
     p->id = id;
     p->t0 = t0;
     p->dt = dt;
@@ -53,6 +55,8 @@ void push_process(process ** v, int * cur_pos, int * cur_size,
 
     int name_size = strlen(p.name);
 
+    (*v)[i].running = p.running;
+    (*v)[i].done = p.done;
     (*v)[i].id = p.id;
     (*v)[i].t0 = p.t0;
     (*v)[i].dt = p.dt;
@@ -91,4 +95,30 @@ void read_trace(FILE * trace, process ** v, int * cur_pos,
 	free(p);
     }
     free(name);
+}
+
+void create_thread(process * p) {
+    pthread_mutex_init(p->mutex, NULL);
+    pthread_mutex_lock(p->mutex);
+    pthread_create(p->thread, NULL, run_process, (void *) p);
+}
+
+void * run_process(void * arg) {
+    double cur = 0;
+    process * p = (process *)(arg);
+    p->running = 1;
+    event("Processo %d começou a usar a CPU\n", p->id); 
+    while (cur < p->dt) {
+	pthread_mutex_lock(p->mutex);
+	struct timespec t;
+	t.tv_sec = (int) QUANTUM;
+	t.tv_nsec = (QUANTUM - t.tv_sec) * 1000000000;
+	cur += QUANTUM;
+	nanosleep(&t, NULL);
+	pthread_mutex_unlock(p->mutex);
+    }
+    event("Processo %d terminou de rodar\n", p->id);
+    p->running = 0;
+    p->done = 1;
+    return NULL;
 }

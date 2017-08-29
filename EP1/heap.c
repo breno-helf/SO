@@ -41,7 +41,7 @@ void heap_push(Heap H, double val, process * key) {
     if (H->cur_pos == H->cur_size) heap_double(H);
     H->v[H->cur_pos] = N;
 
-    heap_go_up(H);
+    heap_swim(H);
 
     H->cur_pos++;    
 }
@@ -53,7 +53,7 @@ process * heap_top(Heap H) {
 void heap_pop(Heap H) {
     free(H->v[0]);
     H->v[0] = H->v[--H->cur_pos];
-    heap_go_down(H);
+    heap_dive(H);
 }
 
 void heap_swap(Heap H, int a, int b) {
@@ -62,7 +62,7 @@ void heap_swap(Heap H, int a, int b) {
     H->v[b] = temp;
 }
 
-void heap_go_up(Heap H) {
+void heap_swim(Heap H) {
     int i = H->cur_pos;
 
     while (i > 0 && H->v[i]->val < H->v[(i - 1) / 2]->val) {
@@ -71,7 +71,7 @@ void heap_go_up(Heap H) {
     }
 }
 
-void heap_go_down(Heap H) {
+void heap_dive(Heap H) {
     int i = 0;
     int sz = H->cur_pos;
     

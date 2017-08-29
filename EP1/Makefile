@@ -1,12 +1,27 @@
+# Breno Helfstein Moura       NUSP: 9790972
+# Lucas Daher                 NUSP: 8991769
+
 FLAGS = -pthread -Wall -pedantic -g -std=c99 -D _POSIX_C_SOURCE=199309L
-FILES = ep1.c process.c process.h clock.c clock.h event.h heap.h heap.c shortest.c shortest.h queue.h queue.c
+OBJS = ep1.o process.o clock.o event.o heap.o shortest.o queue.o
 EXEC = ep1sh ep1
 
-clear:
-	rm ${EXEC} *~ a.out
+.PHONY: clean
 
-ep1sh: ep1sh.c
-	gcc ${FLAGS} -o ep1sh ep1sh.c -lreadline
+all: ep1 ep1sh
 
-ep1: ${FILES}
-	gcc ${FLAGS} -o ep1 ${FILES}
+ep1sh: ep1sh.o
+	$(CC) $(CFLAGS) $^ -o $@ -lreadline
+	make clean
+
+ep1: $(OBJS)
+	$(CC) $(FLAGS) $^ -o $@
+	make clean
+
+%.o: %.c %.h
+	$(CC) $(FLAGS) -c $< -o $@
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+clean:
+	-rm -f *.o *~

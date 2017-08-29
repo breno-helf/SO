@@ -35,11 +35,11 @@ process * heap_top(Heap H);
 
 void heap_pop(Heap H);
 
-/* Swim function */
-void heap_go_up(Heap H);
+/* try to promote the last node */
+void heap_swim(Heap H);
 
-/* Dive funciton */
-void heap_go_down(Heap H);
+/* try to unpromote the first node */
+void heap_dive(Heap H);
 
 void heap_swap(Heap H, int a, int b);
 
