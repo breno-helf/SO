@@ -1,33 +1,16 @@
-#include "linkedlist.h"
+#include "queue.h"
+#include <assert.h>
 
-linkedlist *copy_array(process *array, int cur_pos) {
-    linkedlist *list = create_list();
+Queue copy_array(process *array, int cur_pos) {
+    Queue list = create_queue();
     for (int i = 0; i < cur_pos; i++) {
-        node *n = create_node(&array[i]);
-        push(n, list);
+        push(&array[i], list);
     }
     return list;
-    
-    /*list->size = cur_pos;
-    if (cur_pos == 0) {
-        list->header = NULL;
-        return list;
-    }
-    list->header = (node *) malloc (sizeof (node));
-    node *curr = list->header;
-    curr->val = &array[0];
-    for (int i = 0; i < cur_pos; i++) {
-        node *n = (node*) malloc (sizeof(node));
-        n->val = &array[i];
-        curr->next = n;
-        curr = curr->next;
-    }
-    curr->next = NULL;
-    return list;*/
 }
 
-linkedlist *create_list() {
-    linkedlist *q = (linkedlist *) malloc(sizeof(linkedlist));
+Queue create_queue() {
+    Queue q = (Queue) malloc(sizeof(Queue));
     q->size = 0;
     q->header = NULL;
     q->tail = NULL;
@@ -41,7 +24,16 @@ node *create_node(process *val) {
     return n;
 }
 
-void push(node *n, linkedlist *queue) {
+process * front(Queue  queue) {
+    return queue->header->val;
+}
+
+int queue_size(Queue  queue) {
+    return queue->size;
+}
+
+void push(process *val, Queue queue) {
+    node *n = create_node(val);
     queue->size++;
     if (queue->size == 1) {
         n->next = NULL;
@@ -54,7 +46,7 @@ void push(node *n, linkedlist *queue) {
     queue->tail->next = NULL;
 }
 
-void pop(linkedlist *queue) {
+void pop(Queue queue) {
     if (queue->size == 0) return;
     node *temp = queue->header;
     queue->header = queue->header->next;
@@ -63,7 +55,7 @@ void pop(linkedlist *queue) {
     if (queue->size == 0) queue->tail = NULL;
 }
 
-void free_list(linkedlist *queue) {
+void free_queue(Queue queue) {
     node *curr, *next;
     curr = queue->header;
     while (curr != NULL) {
@@ -73,7 +65,7 @@ void free_list(linkedlist *queue) {
     }
 }
 
-void to_tail(linkedlist *queue) {
+void to_tail(Queue queue) {
     if (queue->size <= 1) return;
     node *temp = queue->header;
     queue->header = queue->header->next;
@@ -81,3 +73,40 @@ void to_tail(linkedlist *queue) {
     queue->tail = queue->tail->next;
     queue->tail->next = NULL;
 }
+
+
+/* Unit testing */
+/*
+int main() {
+    Queue Q = create_queue();
+
+    push(NULL, Q);
+    push(NULL, Q);
+
+    assert(queue_size(Q) == 2);
+
+    pop(Q);
+
+    assert(queue_size(Q) == 1);
+
+    assert(front(Q) == NULL);
+
+    pop(Q);
+
+    assert(queue_size(Q) == 0);
+
+    push(NULL, Q);
+    push(NULL, Q);
+
+    assert(queue_size(Q) == 2);
+
+    pop(Q);
+
+    assert(queue_size(Q) == 1);
+
+    assert(front(Q) == NULL);
+
+    pop(Q);
+
+}
+*/

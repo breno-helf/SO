@@ -6,7 +6,7 @@ Heap heap_start() {
     Heap H = (Heap) malloc(sizeof(heap));
     H->cur_size = ST_SZ;
     H->cur_pos = 0;
-    H->v = (node **) malloc(sizeof(node *) * ST_SZ);
+    H->v = (heap_node **) malloc(sizeof(heap_node *) * ST_SZ);
     return H;
 }
 
@@ -20,11 +20,11 @@ void heap_free(Heap H) {
 }
 
 void heap_double(Heap H) {
-    node ** temp = H->v;
+    heap_node ** temp = H->v;
     int i, old_size = H->cur_size;
     H->cur_size *= 2;
 
-    H->v = (node **) malloc(sizeof(node *) * H->cur_size);
+    H->v = (heap_node **) malloc(sizeof(heap_node *) * H->cur_size);
 
     for (i = 0; i < old_size; i++)
 	H->v[i] = temp[i];
@@ -32,7 +32,7 @@ void heap_double(Heap H) {
 }
 
 void heap_push(Heap H, double val, process * key) {
-    node * N = (node *) malloc(sizeof(node));
+    heap_node * N = (heap_node *) malloc(sizeof(heap_node));
 
     
     N->val = val;
@@ -57,7 +57,7 @@ void heap_pop(Heap H) {
 }
 
 void heap_swap(Heap H, int a, int b) {
-    node * temp = H->v[a];
+    heap_node * temp = H->v[a];
     H->v[a] = H->v[b];
     H->v[b] = temp;
 }

@@ -13,6 +13,6 @@
 #include "heap.h"
 #include "clock.h"
 
-void shortest(process * v, int n);
+void shortest(FILE * output, process * v, int n);
 
 #endif

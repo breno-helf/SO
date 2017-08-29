@@ -9,11 +9,7 @@ int first_coming_cmp(const void * p1, const void * p2) {
 }
 
 process * build_process(int id, double t0, double dt, double deadline,
-<<<<<<< HEAD
 			char * name) {
-=======
-            char * name) {
->>>>>>> origin/pthreadsbugadas
     process * p;
     p = (process *) malloc(sizeof(process));
     p->id = id;

@@ -13,10 +13,10 @@
 typedef struct {
     double val;
     process * key;
-} node;
+} heap_node;
 
 typedef struct {
-    node ** v;
+    heap_node ** v;
     int cur_size;
     int cur_pos;
 } heap;
@@ -35,8 +35,10 @@ process * heap_top(Heap H);
 
 void heap_pop(Heap H);
 
+/* Swim function */
 void heap_go_up(Heap H);
 
+/* Dive funciton */
 void heap_go_down(Heap H);
 
 void heap_swap(Heap H, int a, int b);

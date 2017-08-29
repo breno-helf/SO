@@ -7,8 +7,6 @@
 #include "process.h"
 #include "event.h"
 #include "shortest.h"
-<<<<<<< HEAD
-=======
 
 void *np_func(void *arg) {
     float secs = *((double*) arg);
@@ -19,7 +17,6 @@ void *np_func(void *arg) {
     nanosleep(&t, NULL);
     return NULL;
 }
->>>>>>> origin/pthreadsbugadas
 
 int main(int argc, char * argv[]) {
     int i, type = 0;
@@ -74,17 +71,13 @@ int main(int argc, char * argv[]) {
     read_trace(input, &v, &cur_pos, &cur_size);
     
     qsort(v, cur_pos, sizeof(process), first_coming_cmp);
-<<<<<<< HEAD
-   
-=======
 
->>>>>>> origin/pthreadsbugadas
     for (i = 0; i < cur_pos; i++) {
 	fprintf (stderr, "%lf %lf %lf %s\n", v[i].t0, v[i].dt, v[i].deadline, v[i].name);
     }
     
     if (type == 1) {
-	shortest(v, cur_pos);
+	shortest(output, v, cur_pos);
     } else if (type == 2) {
 	/* round_robin(v, cur_pos); */
     } else {

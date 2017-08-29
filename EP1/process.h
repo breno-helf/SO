@@ -12,11 +12,8 @@
 #define START_SIZE 2
 
 typedef struct {
-<<<<<<< HEAD
-=======
     pthread_t *thread;
     pthread_mutex_t *mutex;
->>>>>>> origin/pthreadsbugadas
     int id;
     double t0;
     double dt;
