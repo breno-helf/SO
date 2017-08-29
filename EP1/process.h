@@ -1,3 +1,6 @@
+#ifndef PROCESS
+#define PROCESS
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -11,6 +14,7 @@
 typedef struct {
     pthread_t *thread;
     pthread_mutex_t *mutex;
+    int id;
     double t0;
     double dt;
     double deadline;
@@ -19,22 +23,15 @@ typedef struct {
 
 /**
  * Comparator for sorting the process acording to
- * the shortest processing time.
+ * the time that it arrives at the processor.
  */
-int shortest_process_cmp(const void * p1, const void * p2);
-
-/**
- * Comparator for sorting the process acording to
- * the highest priority, that is the one with the
- * earliest deadline.
- */
-int highest_priority_cmp(const void * p1, const void * p2);
+int first_coming_cmp(const void * p1, const void * p2);
 
 /*
   Build process based on arguments t0, dt, deadline
   and name. Return a pointer to the process created.
 */
-process * build_process(double t0, double dt, double deadline,
+process * build_process(int id, double t0, double dt, double deadline,
 		   char * name);
 /*
   Creates a vector of the process struct.
@@ -64,3 +61,4 @@ void free_vector(process *v, int * cur_pos, int * cur_size);
 */
 void read_trace(FILE * trace, process ** v, int * cur_pos,
 		int * cur_size);
+#endif

@@ -4,16 +4,9 @@
 #include <errno.h>
 #include "linkedlist.h"
 #include <pthread.h>
-
-void *np_func(void *arg) {
-    float secs = *((double*) arg);
-    struct timespec t;
-    t.tv_sec = (int) secs;
-    secs -= t.tv_sec;
-    t.tv_nsec = secs * 1000000000;
-    nanosleep(&t, NULL);
-    return NULL;
-}
+#include "process.h"
+#include "event.h"
+#include "shortest.h"
 
 void *np_func(void *arg) {
     float secs = *((double*) arg);
@@ -26,8 +19,7 @@ void *np_func(void *arg) {
 }
 
 int main(int argc, char * argv[]) {
-    int db = 0;
-    int type = 0;
+    int i, type = 0;
     char * input_name;
     char * output_name;
     FILE * input;
@@ -51,6 +43,10 @@ int main(int argc, char * argv[]) {
 	    return -1;
     }
 
+    if (argc > 4 && strcmp(argv[4], "d")) {
+	show_event = 1;
+    }
+
     input = fopen(input_name, "r");
     output = fopen(output_name, "w");
 
@@ -60,8 +56,8 @@ int main(int argc, char * argv[]) {
     }
 
     if (output == NULL) {
-	    fprintf(stderr, "Fatal error: Failed to open file %s\n", output_name);
-	    return -1;
+        fprintf(stderr, "Fatal error: Failed to open file %s\n", output_name);
+        return -1;
     }
 
     process * v;
@@ -69,35 +65,25 @@ int main(int argc, char * argv[]) {
 
     start_vector(&v, &cur_pos, &cur_size, &complete_process, &context_change);
     read_trace(input, &v, &cur_pos, &cur_size);
-    /*
-      qsort(v, cur_pos, sizeof(process), shortest_process_cmp);
-      qsort(v, cur_pos, sizeof(process), highest_priority_cmp);
-    */
+    
+    qsort(v, cur_pos, sizeof(process), first_coming_cmp);
+
+    for (i = 0; i < cur_pos; i++) {
+	fprintf (stderr, "%lf %lf %lf %s\n", v[i].t0, v[i].dt, v[i].deadline, v[i].name);
+    }
+    
     if (type == 1) {
-        qsort(v, cur_pos, sizeof(process), shortest_process_cmp);
-        linkedlist *list = copy_array(v, cur_pos);
-        printf("cp%d\n", db++);
-        printf("%d\n", list->size);
-        while(list->size > 0) {
-            printf("%s\n", (list->header->val)->name);
-            pop(list);
-        }
-        for(int i = 0; i < cur_pos; i++) {
-            void *pt = &(v[i].dt);
-            pthread_create(v[i].thread, NULL, t_func, pt);
-            pthread_join(*(v[i].thread), NULL);
-        }
+	shortest(v, cur_pos);
+    } else if (type == 2) {
+	/* round_robin(v, cur_pos); */
+    } else {
+	/* priority(v, cur_pos); */
     }
-    if (type == 3) {
-        qsort(v, cur_pos, sizeof(process), highest_priority_cmp);
-        for(int i = 0; i < cur_pos; i++) {
-            void *pt = &(v[i].dt);
-            pthread_create(v[i].thread, NULL, t_func, pt);
-            pthread_join(*(v[i].thread), NULL);
-        }
-    }
-    for (int i = 0; i < cur_pos; i++) {
-	    fprintf (stderr, "%lf %lf %lf %s\n", v[i].t0, v[i].dt, v[i].deadline, v[i].name);
-    }
+    
     free_vector(v, &cur_pos, &cur_size);
+    fclose(input);
+    fclose(output);
+
+
+    return 0;
 }
