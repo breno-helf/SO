@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 FLAGS = -Wall -pedantic -g -std=c99 -D _POSIX_C_SOURCE=199309L
 FILES = ep1.c process.c process.h clock.c clock.h event.h heap.h heap.c shortest.c shortest.h
+=======
+FLAGS = -pthread -Wall -pedantic -g -std=c99 -D _POSIX_C_SOURCE=199309L
+FILES = ep1.c process.c process.h clock.c clock.h event.h heap.h heap.c shortest.c shortest.h linkedlist.h linkedlist.c
+>>>>>>> origin/pthreadsbugadas
 EXEC = ep1sh ep1
 
 clear:

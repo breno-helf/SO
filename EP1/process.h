@@ -6,11 +6,17 @@
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
+#include <pthread.h>
 
 #define MAX_SIZE 1123
 #define START_SIZE 2
 
 typedef struct {
+<<<<<<< HEAD
+=======
+    pthread_t *thread;
+    pthread_mutex_t *mutex;
+>>>>>>> origin/pthreadsbugadas
     int id;
     double t0;
     double dt;

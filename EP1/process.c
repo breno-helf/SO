@@ -9,7 +9,11 @@ int first_coming_cmp(const void * p1, const void * p2) {
 }
 
 process * build_process(int id, double t0, double dt, double deadline,
+<<<<<<< HEAD
 			char * name) {
+=======
+            char * name) {
+>>>>>>> origin/pthreadsbugadas
     process * p;
     p = (process *) malloc(sizeof(process));
     p->id = id;
@@ -57,6 +61,8 @@ void push_process(process ** v, int * cur_pos, int * cur_size,
     (*v)[i].t0 = p.t0;
     (*v)[i].dt = p.dt;
     (*v)[i].deadline = p.deadline;
+    (*v)[i].mutex = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
+    (*v)[i].thread = (pthread_t *) malloc(sizeof(pthread_t));
     
     (*v)[i].name = (char *) malloc(sizeof(char) * (name_size + 1));
 
