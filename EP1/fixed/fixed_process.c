@@ -18,6 +18,7 @@ process * build_process(int id, double t0, double dt, double deadline,
     p = (process *) malloc(sizeof(process));
     p->done = 0;
     p->running = 0;
+    p->quantum_num = 0;
     p->id = id;
     p->t0 = t0;
     p->dt = dt;
@@ -116,15 +117,19 @@ void * run_process(void * arg) {
     while (cur < p->dt) {
 	pthread_mutex_lock(p->thread_mutex);
 	struct timespec t;
-	t.tv_sec = (int) QUANTUM;
-	t.tv_nsec = ((double)QUANTUM - t.tv_sec) * 1000000000;
-	cur += QUANTUM;
-	nanosleep(&t, NULL);
-	pthread_mutex_unlock(p->main_mutex);
+	double add = 0;
+	if (p->quantum_num > 0) {
+	    p->quantum_num--;
+	    t.tv_sec = (int) QUANTUM;
+	    t.tv_nsec = ((double)QUANTUM - t.tv_sec) * 1000000000;
+	    nanosleep(&t, NULL);
+	    add = QUANTUM;
+	}
+	cur += add;
+	pthread_mutex_unlock(p->thread_mutex);
     }  
 
     p->running = 0;
     p->done = 1;
-    pthread_mutex_unlock(p->main_mutex);
     return NULL;
 }
