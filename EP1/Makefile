@@ -2,7 +2,7 @@
 # Lucas Daher                 NUSP: 8991769
 
 FLAGS = -pthread -Wall -pedantic -g -std=c99 -D _POSIX_C_SOURCE=199309L
-OBJS = ep1.o process.o clock.o event.o heap.o shortest.o queue.o
+OBJS = ep1.o process.o clock.o event.o heap.o shortest.o queue.o roundrobin.o
 EXEC = ep1sh ep1
 
 .PHONY: clean

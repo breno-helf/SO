@@ -16,8 +16,9 @@
 
 
 typedef struct {
-    pthread_t *thread;
-    pthread_mutex_t *mutex;
+    pthread_t * thread;
+    pthread_mutex_t * thread_mutex;
+    pthread_mutex_t * main_mutex;
     int id;
     char running;
     char done;
@@ -26,6 +27,8 @@ typedef struct {
     double deadline;
     char * name;
 } process;
+
+double min(double a, double b); 
 
 /**
  * Comparator for sorting the process acording to

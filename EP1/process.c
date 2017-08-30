@@ -1,5 +1,9 @@
 #include "process.h"
 
+double min(double a, double b) {
+    return (a < b) ? a : b;
+}
+
 int first_coming_cmp(const void * p1, const void * p2) {
     double t1 = ((process * )p1)->t0;
     double t2 = ((process * )p2)->t0;
@@ -61,7 +65,9 @@ void push_process(process ** v, int * cur_pos, int * cur_size,
     (*v)[i].t0 = p.t0;
     (*v)[i].dt = p.dt;
     (*v)[i].deadline = p.deadline;
-    (*v)[i].mutex = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
+    (*v)[i].thread_mutex = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
+    (*v)[i].main_mutex = NULL;
+    
     (*v)[i].thread = (pthread_t *) malloc(sizeof(pthread_t));
     
     (*v)[i].name = (char *) malloc(sizeof(char) * (name_size + 1));
@@ -98,8 +104,8 @@ void read_trace(FILE * trace, process ** v, int * cur_pos,
 }
 
 void create_thread(process * p) {
-    pthread_mutex_init(p->mutex, NULL);
-    pthread_mutex_lock(p->mutex);
+    pthread_mutex_init(p->thread_mutex, NULL);
+    pthread_mutex_lock(p->thread_mutex);
     pthread_create(p->thread, NULL, run_process, (void *) p);
 }
 
@@ -107,18 +113,20 @@ void * run_process(void * arg) {
     double cur = 0;
     process * p = (process *)(arg);
     p->running = 1;
-    event("Processo %d começou a usar a CPU\n", p->id); 
+    event("Processo da linha %d (%s) começou a usar a CPU\n", p->id, p->name); 
     while (cur < p->dt) {
-	pthread_mutex_lock(p->mutex);
+	pthread_mutex_lock(p->thread_mutex);
 	struct timespec t;
 	t.tv_sec = (int) QUANTUM;
-	t.tv_nsec = (QUANTUM - t.tv_sec) * 1000000000;
+	t.tv_nsec = ((double)QUANTUM - t.tv_sec) * 1000000000;
 	cur += QUANTUM;
 	nanosleep(&t, NULL);
-	pthread_mutex_unlock(p->mutex);
-    }
-    event("Processo %d terminou de rodar\n", p->id);
+	pthread_mutex_unlock(p->main_mutex);
+    }  
+
+    event("Processo linha %d (%s) terminou\n", p->id, p->name);
     p->running = 0;
     p->done = 1;
+    pthread_mutex_unlock(p->main_mutex);
     return NULL;
 }

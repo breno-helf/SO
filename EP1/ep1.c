@@ -5,6 +5,7 @@
 #include <pthread.h>
 #include "process.h"
 #include "shortest.h"
+#include "roundrobin.h"
 
 int main(int argc, char * argv[]) {
     int type = 0;
@@ -33,9 +34,8 @@ int main(int argc, char * argv[]) {
 
     
     if (argc > 4 && strcmp(argv[4], "d") == 0) {
-	update_show(1);
-	printf("Atualizei %d\n", show_event);
-    } else update_show(0);
+	event(NULL);
+    } 
     
     input = fopen(input_name, "r");
     output = fopen(output_name, "w");
@@ -57,13 +57,13 @@ int main(int argc, char * argv[]) {
     read_trace(input, &v, &cur_pos, &cur_size);
     
     qsort(v, cur_pos, sizeof(process), first_coming_cmp);
-
+   
     context_change = 0;
     
     if (type == 1) {
 	shortest(output, v, cur_pos);
     } else if (type == 2) {
-	/* round_robin(v, cur_pos); */
+	round_robin(output, v, cur_pos);
     } else {
 	/* priority(v, cur_pos); */
     }
