@@ -9,23 +9,26 @@ void round_robin(FILE * output, process * v, int n) {
     pthread_mutex_t * main_mutex = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
     pthread_mutex_init(main_mutex, NULL);
     process * last = NULL;
+
+    int cnt = 0;
     
     while (cur < n || queue_size(Q) > 0) {
 	double cur_time = get_time(start_time);
 	
 	while (cur < n && cur_time >= v[cur].t0) {
 	    push(&v[cur], Q);
-	    event("Processo %d entrou no sistema em %lf\n", v[cur].id, cur_time);
+	    event("Processo da linha %d (%s) entrou no sistema\n",v[cur].id, v[cur].name); 
+	    v[cur].main_mutex = main_mutex;
+	    create_thread(&v[cur]);
 	    cur++;
 	}
 
 	if (queue_size(Q) > 0) {
 	    process * p = front(Q);
-	    if (p != last && last != NULL) context_change++;
+	    if (p == &v[0]) cnt++;
+	    if (p != last && last != NULL && last->done == 0) context_change++;
 	    last = p;
 	    int qtd = 0;
-	    p->main_mutex = main_mutex;
-	    create_thread(p);
 	    pthread_mutex_unlock(p->main_mutex);
 	    event("Processo %s (%d) começou a usar a CPU\n", p->name, p->id);
 	    while (qtd < 1 && p->done == 0) {
@@ -38,6 +41,7 @@ void round_robin(FILE * output, process * v, int n) {
 	    cur_time = get_time(start_time);
 
 	    if (p->done == 1) {
+		event("Processo linha %d (%s) terminou\n", p->id, p->name);
 		event("%s %lf %lf\n", p->name, cur_time, cur_time - p->t0);
 		fprintf(output, "%s %lf %lf\n", p->name, cur_time, cur_time - p->t0);
 		pop(Q);
@@ -45,6 +49,8 @@ void round_robin(FILE * output, process * v, int n) {
 	}
     }
 
+    printf("--> %d\n", cnt);
+    
     event("%d\n", context_change);
     fprintf(output, "%d\n", context_change);
 }

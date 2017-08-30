@@ -44,12 +44,13 @@ void highest_priority(FILE * output, process * v, int n) {
 	    int qtd = 0;
 	    int lim = calc_quantum(p, cur_time);
 	    pthread_mutex_unlock(p->main_mutex);
-	    event("Processo %s (%d) começou a usar a CPU\n", p->name, p->id);	    
+	    event("Processo %s (%d) começou a usar a CPU\n", p->name, p->id);
 	    while (qtd < lim && p->done == 0) {
 		pthread_mutex_lock(p->main_mutex);
 		pthread_mutex_unlock(p->thread_mutex);
 		qtd++;
 	    }
+	    
 	    event("Processo %s (%d) liberou a CPU\n", p->name, p->id);
 
 	    if (p->done == 1) {
