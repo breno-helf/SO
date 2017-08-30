@@ -1,7 +1,7 @@
 #include "process.h"
 
-double min(double a, double b) {
-    return (a < b) ? a : b;
+double max(double a, double b) {
+    return (a > b) ? a : b;
 }
 
 int first_coming_cmp(const void * p1, const void * p2) {
@@ -113,7 +113,7 @@ void * run_process(void * arg) {
     double cur = 0;
     process * p = (process *)(arg);
     p->running = 1;
-    event("Processo da linha %d (%s) começou a usar a CPU\n", p->id, p->name); 
+    event("Processo da linha %d (%s) entrou no sistema\n", p->id, p->name); 
     while (cur < p->dt) {
 	pthread_mutex_lock(p->thread_mutex);
 	struct timespec t;

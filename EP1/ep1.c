@@ -6,6 +6,7 @@
 #include "process.h"
 #include "shortest.h"
 #include "roundrobin.h"
+#include "highestpriority.h"
 
 int main(int argc, char * argv[]) {
     int type = 0;
@@ -65,7 +66,7 @@ int main(int argc, char * argv[]) {
     } else if (type == 2) {
 	round_robin(output, v, cur_pos);
     } else {
-	/* priority(v, cur_pos); */
+	highest_priority(output, v, cur_pos);
     }
     
     free_vector(v, &cur_pos, &cur_size);
