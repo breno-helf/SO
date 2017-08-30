@@ -21,8 +21,6 @@ void highest_priority(FILE * output, process * v, int n) {
     struct timeval start_time;
     gettimeofday(&start_time, NULL);
     Heap H = heap_start();
-    pthread_mutex_t * main_mutex = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
-    pthread_mutex_init(main_mutex, NULL);
     process * last = NULL;
     int context_change = 0;
     
@@ -32,7 +30,6 @@ void highest_priority(FILE * output, process * v, int n) {
 	while (cur < n && cur_time >= v[cur].t0) {
 	    heap_push(H, v[cur].deadline, &v[cur]);
 	    event("Processo da linha %d (%s) entrou no sistema\n",v[cur].id, v[cur].name); 
-	    v[cur].main_mutex = main_mutex;
 	    create_thread(&v[cur]);
 	    cur++;
 	}
@@ -41,17 +38,12 @@ void highest_priority(FILE * output, process * v, int n) {
 	    process * p = heap_top(H);
 	    if (p != last && last != NULL && last->done == 0) context_change++;
 	    last = p;
-	    int qtd = 0;
 	    int lim = calc_quantum(p, cur_time);
-	    pthread_mutex_unlock(p->main_mutex);
 	    event("Processo %s (%d) começou a usar a CPU\n", p->name, p->id);
-	    while (qtd < lim && p->done == 0) {
-		pthread_mutex_lock(p->main_mutex);
-		pthread_mutex_unlock(p->thread_mutex);
-		qtd++;
-		pthread_mutex_lock(p->main_mutex);
-		pthread_mutex_unlock(p->main_mutex);
-	    }
+	    p->quantum_num = lim;
+	    pthread_mutex_unlock(p->thread_mutex);
+	    while (p->quantum_num > 0 && p->done == 0);
+	    pthread_mutex_lock(p->thread_mutex);
 	    
 	    event("Processo %s (%d) liberou a CPU\n", p->name, p->id);
 

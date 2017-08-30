@@ -18,7 +18,6 @@
 typedef struct {
     pthread_t * thread;
     pthread_mutex_t * thread_mutex;
-    pthread_mutex_t * main_mutex;
     int id;
     char running;
     int quantum_num;

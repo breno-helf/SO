@@ -6,8 +6,6 @@ void round_robin(FILE * output, process * v, int n) {
     struct timeval start_time;
     gettimeofday(&start_time, NULL);
     Queue Q = create_queue();
-    pthread_mutex_t * main_mutex = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
-    pthread_mutex_init(main_mutex, NULL);
     process * last = NULL;
     
     while (cur < n || queue_size(Q) > 0) {
@@ -16,7 +14,6 @@ void round_robin(FILE * output, process * v, int n) {
 	while (cur < n && cur_time >= v[cur].t0) {
 	    push(&v[cur], Q);
 	    event("Processo da linha %d (%s) entrou no sistema\n",v[cur].id, v[cur].name); 
-	    v[cur].main_mutex = main_mutex;
 	    create_thread(&v[cur]);
 	    cur++;
 	}
@@ -25,18 +22,12 @@ void round_robin(FILE * output, process * v, int n) {
 	    process * p = front(Q);
 	    if (p != last && last != NULL && last->done == 0) context_change++;
 	    last = p;
-	    int qtd = 0;
-	    pthread_mutex_unlock(p->main_mutex);
 	    event("Processo %s (%d) começou a usar a CPU\n", p->name, p->id);
 		    
-	    while (qtd < 1 && p->done == 0) {
-		pthread_mutex_lock(p->main_mutex);
-		pthread_mutex_unlock(p->thread_mutex);
-		qtd++;
-		pthread_mutex_lock(p->main_mutex);
-		pthread_mutex_unlock(p->main_mutex);
-	    }
-
+	    p->quantum_num = 1;
+	    pthread_mutex_unlock(p->thread_mutex);
+	    while (p->quantum_num > 0 && p->done == 0);
+	    pthread_mutex_lock(p->thread_mutex);	    
 	    
 	    event("Processo %s (%d) liberou a CPU\n", p->name, p->id);
 	    cur_time = get_time(start_time);
