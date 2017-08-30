@@ -119,7 +119,6 @@ void * run_process(void * arg) {
 	t.tv_sec = (int) QUANTUM;
 	t.tv_nsec = ((double)QUANTUM - t.tv_sec) * 1000000000;
 	cur += QUANTUM;
-	if (p->id == 0) printf("--> %lf\n", cur);
 	nanosleep(&t, NULL);
 	pthread_mutex_unlock(p->main_mutex);
     }  

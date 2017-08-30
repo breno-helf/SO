@@ -9,8 +9,6 @@ void round_robin(FILE * output, process * v, int n) {
     pthread_mutex_t * main_mutex = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
     pthread_mutex_init(main_mutex, NULL);
     process * last = NULL;
-
-    int cnt = 0;
     
     while (cur < n || queue_size(Q) > 0) {
 	double cur_time = get_time(start_time);
@@ -25,7 +23,6 @@ void round_robin(FILE * output, process * v, int n) {
 
 	if (queue_size(Q) > 0) {
 	    process * p = front(Q);
-	    if (p == &v[0]) cnt++;
 	    if (p != last && last != NULL && last->done == 0) context_change++;
 	    last = p;
 	    int qtd = 0;
@@ -53,8 +50,6 @@ void round_robin(FILE * output, process * v, int n) {
 	}
     }
 
-    printf("--> %d\n", cnt);
-    
     event("%d\n", context_change);
     fprintf(output, "%d\n", context_change);
 }
