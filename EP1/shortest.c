@@ -20,7 +20,9 @@ void shortest(FILE * output, process * v, int n) {
 	
 	while (cur < n && cur_time >= v[cur].t0) {
 	    heap_push(H, v[cur].dt, &v[cur]);
-	    event("Processo %d entrou no sistema em %lf\n", v[cur].id, cur_time);
+	    event("Processo da linha %d (%s) entrou no sistema\n",v[cur].id, v[cur].name); 
+	    v[cur].main_mutex = main_mutex;
+	    create_thread(&v[cur]);
 	    cur++;
 	}
 
@@ -34,7 +36,9 @@ void shortest(FILE * output, process * v, int n) {
 		pthread_mutex_lock(p->main_mutex);
 		pthread_mutex_unlock(p->thread_mutex);
 	    }
-	    event("Processo %s (%d) liberou a CPU\n", p->name, p->id);	    
+	    event("Processo %s (%d) liberou a CPU\n", p->name, p->id);
+
+	    event("Processo linha %d (%s) terminou\n", p->id, p->name);	    
 	    cur_time = get_time(start_time);
 	    event("%s %lf %lf\n", p->name, cur_time, cur_time - p->t0);
 	    fprintf(output, "%s %lf %lf\n", p->name, cur_time, cur_time - p->t0); 		    

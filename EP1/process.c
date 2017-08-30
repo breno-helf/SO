@@ -113,7 +113,6 @@ void * run_process(void * arg) {
     double cur = 0;
     process * p = (process *)(arg);
     p->running = 1;
-    event("Processo da linha %d (%s) entrou no sistema\n", p->id, p->name); 
     while (cur < p->dt) {
 	pthread_mutex_lock(p->thread_mutex);
 	struct timespec t;
@@ -124,7 +123,6 @@ void * run_process(void * arg) {
 	pthread_mutex_unlock(p->main_mutex);
     }  
 
-    event("Processo linha %d (%s) terminou\n", p->id, p->name);
     p->running = 0;
     p->done = 1;
     pthread_mutex_unlock(p->main_mutex);
