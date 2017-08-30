@@ -59,7 +59,7 @@ if directory != '-n':
 
 # gera os arquivos de trace
 for arq_i in range(0, int(n_arquivos_trace)):
-	tempo = 0
+	tempo = 1
 
 	if directory == '-n': file = open("arquivoTrace" + str(int(arq_i) + int(count)) + ".txt", "w")
 	else: file = open(directory + "/arquivoTrace" + str(int(arq_i) + int(count)) + ".txt", "w")
@@ -67,7 +67,7 @@ for arq_i in range(0, int(n_arquivos_trace)):
 		if proc_i != 0 and proc_i % int(processos_gerados_por_segundo) == 0:
 			tempo = tempo + 1
 		# gera dt e deadline aleatorios
-		dt = random.uniform(0, int(longevidade_do_proc) + 1)
+		dt = random.uniform(1, int(longevidade_do_proc) + 1)
 		deadline = random.uniform(tempo + dt, tempo + dt * float(proporcao_deadline) + 1)
 		file.write(str(tempo) + " " + str(dt) + " " + str(deadline) + " processo" + str(proc_i) + "\n")
 		
