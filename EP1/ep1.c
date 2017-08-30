@@ -68,6 +68,12 @@ int main(int argc, char * argv[]) {
     } else {
 	highest_priority(output, v, cur_pos);
     }
+
+    for (int i = 0; i < cur_pos; i++)
+	if (pthread_join(* v[i].thread, NULL)) {
+	    fprintf(stderr, "Fatal error: failed to join thread %d\n", v[i].id);
+	    return -1;
+	}
     
     free_vector(v, &cur_pos, &cur_size);
     fclose(input);
