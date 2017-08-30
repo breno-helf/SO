@@ -29,11 +29,11 @@ void shortest(FILE * output, process * v, int n) {
 	if (heap_empty(H) == 0) {
 	    process * p = heap_top(H);
 	    p->main_mutex = main_mutex;
-	    pthread_mutex_unlock(p->main_mutex);
-	    event("Processo %s (%d) começou a usar a CPU\n", p->name, p->id);	    
+	    event("Processo %s (%d) começou a usar a CPU\n", p->name, p->id);
+	    p->quantum_num = 10 * (p->dt) + 5;
 	    while (p->done == 0) {
-		pthread_mutex_lock(p->main_mutex);
 		pthread_mutex_unlock(p->thread_mutex);
+		pthread_mutex_lock(p->thread_mutex);
 	    }
 	    event("Processo %s (%d) liberou a CPU\n", p->name, p->id);
 

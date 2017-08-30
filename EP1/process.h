@@ -21,6 +21,7 @@ typedef struct {
     pthread_mutex_t * main_mutex;
     int id;
     char running;
+    int quantum_num;
     char done;
     double t0;
     double dt;
