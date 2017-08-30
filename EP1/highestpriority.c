@@ -49,6 +49,8 @@ void highest_priority(FILE * output, process * v, int n) {
 		pthread_mutex_lock(p->main_mutex);
 		pthread_mutex_unlock(p->thread_mutex);
 		qtd++;
+		pthread_mutex_lock(p->main_mutex);
+		pthread_mutex_unlock(p->main_mutex);
 	    }
 	    
 	    event("Processo %s (%d) liberou a CPU\n", p->name, p->id);
