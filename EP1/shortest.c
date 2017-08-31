@@ -12,6 +12,8 @@ void shortest(FILE * output, process * v, int n) {
     struct timeval start_time;
     gettimeofday(&start_time, NULL);
     Heap H = heap_start();
+    int deadlines_lost = 0;
+    
     
     while (cur < n || heap_empty(H) == 0) {
 	double cur_time = get_time(start_time);
@@ -34,6 +36,9 @@ void shortest(FILE * output, process * v, int n) {
 
 	    event("Processo linha %d (%s) terminou\n", p->id, p->name);	    
 	    cur_time = get_time(start_time);
+
+	    if (cur_time > p->deadline) deadlines_lost++;
+	    
 	    event("%s %lf %lf\n", p->name, cur_time, cur_time - p->t0);
 	    fprintf(output, "%s %lf %lf\n", p->name, cur_time, cur_time - p->t0); 		    
 	    heap_pop(H);
@@ -44,4 +49,7 @@ void shortest(FILE * output, process * v, int n) {
     
     event("%d\n", 0);
     fprintf(output, "%d\n", 0);
+
+    event("%d\n", deadlines_lost);
+    fprintf(output, "%d\n", deadlines_lost);
 }

@@ -7,7 +7,8 @@ void round_robin(FILE * output, process * v, int n) {
     gettimeofday(&start_time, NULL);
     Queue Q = create_queue();
     process * last = NULL;
-    
+    int deadlines_lost = 0;
+
     while (cur < n || queue_size(Q) > 0) {
 	double cur_time = get_time(start_time);
 	
@@ -33,6 +34,7 @@ void round_robin(FILE * output, process * v, int n) {
 	    cur_time = get_time(start_time);
 
 	    if (p->done == 1) {
+		if (cur_time > p->deadline) deadlines_lost++;
 		event("Processo linha %d (%s) terminou\n", p->id, p->name);
 		event("%s %lf %lf\n", p->name, cur_time, cur_time - p->t0);
 		fprintf(output, "%s %lf %lf\n", p->name, cur_time, cur_time - p->t0);
@@ -41,7 +43,12 @@ void round_robin(FILE * output, process * v, int n) {
 	}
     }
 
+    free_queue(Q);
+    
     event("%d\n", context_change);
     fprintf(output, "%d\n", context_change);
+
+    event("%d\n", deadlines_lost);
+    fprintf(output, "%d\n", deadlines_lost);
 }
     

@@ -1,7 +1,7 @@
 #include "process.h"
 
-double max(double a, double b) {
-    return (a > b) ? a : b;
+double min(double a, double b) {
+    return (a < b) ? a : b;
 }
 
 int first_coming_cmp(const void * p1, const void * p2) {

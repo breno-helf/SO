@@ -28,7 +28,7 @@ typedef struct {
     char * name;
 } process;
 
-double max(double a, double b); 
+double min(double a, double b); 
 
 /**
  * Comparator for sorting the process acording to

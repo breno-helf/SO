@@ -4,7 +4,7 @@ import random
 import time
 
 n_arquivos_trace = 30
-processos_gerados_por_segundo = 2
+tempo_max = 2
 n_processos_por_arquivo = 10
 longevidade_do_proc = 5
 proporcao_deadline = 2
@@ -20,7 +20,7 @@ if len(sys.argv) < 2:
 	print "geradorArquivosTrace <diretorio dos arquivos de trace>\n"
 	print "-n\tnumero de arquivos trace\n"
 	print "-N\tnumero de processos de cada arquivo de trace"
-	print "-p\tprocessos gerados por segundo"
+	print "-p\ttempo maximo de entrada de arquivos"
 	print "-l\tquanto tempo um processo pode durar no maximo"
 	print "-c\tcomeca a criar arquivo a partir dessa posicao. Ex: -c 2 / primeiro arquivo sera arquivoTrace2.txt"
 	print "-d\tproporcao deadline em relacao ao dt do processo"
@@ -37,7 +37,7 @@ if len(sys.argv) > 2:
 			n_arquivos_trace = sys.argv[tamanho]
 			tamanho = tamanho - 2
 		if sys.argv[tamanho - 1] == '-p':
-			processos_gerados_por_segundo = sys.argv[tamanho]
+			tempo_max = sys.argv[tamanho]
 			tamanho = tamanho - 2
 		if sys.argv[tamanho - 1] == '-N':
 			n_processos_por_arquivo = sys.argv[tamanho]
@@ -64,11 +64,21 @@ for arq_i in range(0, int(n_arquivos_trace)):
 	if directory == '-n': file = open("arquivoTrace" + str(int(arq_i) + int(count)) + ".txt", "w")
 	else: file = open(directory + "/arquivoTrace" + str(int(arq_i) + int(count)) + ".txt", "w")
 	for proc_i in range(0, int(n_processos_por_arquivo)):
-		if proc_i != 0 and proc_i % int(processos_gerados_por_segundo) == 0:
-			tempo = tempo + 1
+		tempo = random.uniform(1, float(tempo_max) + 1)
+                tempo *= 10.0
+                tempo = int(tempo)
+                tempo /= 10.0
 		# gera dt e deadline aleatorios
-		dt = random.uniform(1, int(longevidade_do_proc) + 1)
+		dt = random.uniform(1, float(longevidade_do_proc) + 1)
+                dt *= 10.0
+                dt = int(dt)
+                dt /= 10.0
 		deadline = random.uniform(tempo + dt, tempo + dt * float(proporcao_deadline) + 1)
+                deadline *= 10.0
+                deadline = int(deadline)
+                deadline /= 10.0
+                
 		file.write(str(tempo) + " " + str(dt) + " " + str(deadline) + " processo" + str(proc_i) + "\n")
 		
 	file.close()
+        
