@@ -1,0 +1,27 @@
+# Breno Helfstein Moura       NUSP: 9790972
+# Lucas Daher                 NUSP: 8991769
+
+Para compilar o EP você deve rodar os comandos do Makefile:
+     - "make all" para compilar tanto o ep1sh quanto o ep1
+     - "make ep1sh" para compilar apenas o ep1sh
+     - "make ep1" para compilar apenas o ep1
+
+Para executar o binário do ep1sh você deve executar
+     - "./ep1sh"
+
+Então o simulador do shell irá começar a ser executado, nele você
+pode executar todos os comandos que foram pedidos para serem
+implementados além do comando "exit" para sair do shell.
+
+Para executar o binário do ep1 você deve executar
+     -"./ep1 (Tipo do Escalonador) (Nome do Arquivo de entrada) (Nome do Arquivo de saída) (Flag Opcional)"
+
+onde:
+     - O tipo do escalonador é um número de 1 a 3, onde:
+       - (1) Shortest Job First
+       - (2) Round Robin
+       - (3) Escalonamento com prioridade (Onde a prioridade é o deadline)
+     - Nome do arquivo de entrada é o nome do .txt onde está o trace
+     - Nome do arquivo de saída é o nome do .txt que será criado pelo simulador
+     - O último parâmetro é uma flag opcional o caractere "d", se recebida o
+       simulador imprime uma série de informações sobre a simulação na stderr.
