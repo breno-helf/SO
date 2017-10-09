@@ -45,8 +45,13 @@ int main(int argc, char * argv[]) {
 	fprintf(stderr, "Number of circuits must be divisible by 20\n");
 	return -1;
     }
-    
-    
+
+    /*
+      Turn on the debug (event) log
+    */
+    if (argc > 4 && strcmp(argv[4], "d") == 0) {
+	event(NULL);
+    }    
     
     return 0;
 }
