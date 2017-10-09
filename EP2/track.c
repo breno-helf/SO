@@ -42,7 +42,9 @@ void track_print(Track ** T, int len, double cur_time) {
 	for (j = 0; j < 10; j++) {
 	    event("%2d ", (T[i][j].cyclist != NULL) ? T[i][j].cyclist->id : -1);
 	}
+	event("\n");
     }
+    event("\n");
 }
 
 void track_destroy(Track ** T, int len) {
