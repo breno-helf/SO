@@ -85,7 +85,9 @@ void * ciclista(void * ptr) {
 	if (dist >= 1.0) {
 	    /* Anda pra frente */
 	    track_leaving_cyclist(Pista, C->i, C->j);
-	    track_arriving_cyclist(Pista, C->i % track_size, C->j, C);
+	    C->i++;
+	    C->i %= track_size;
+	    track_arriving_cyclist(Pista, C->i, C->j, C);
 	    C->blocks++;
 	    dist = 0;
 	}
@@ -126,6 +128,7 @@ void * ciclista(void * ptr) {
 	}
 	
 	C->arrive = 1;
+	//fprintf(stderr, "Thread %d chegou!\n", C->id);
 	while (C->cont == 0);
 	C->cont = 0;
     }
@@ -142,13 +145,13 @@ void print_final_log() {
     qsort(report, cyclists_num, sizeof(Cyclist), cmp_points);
     printf("Final log:\n\n");
     for (i = 0; i < cyclists_num; i++) {
-	if (!Cyclists[i]->broken)
-	    printf("[%.3lf] Cyclist %d with %d points\n", Cyclists[i]->cur_time, Cyclists[i]->id, Cyclists[i]->points);
+	if (!report[i].broken)
+	    printf("[%.3lf] Cyclist %d with %d points\n", report[i].cur_time, report[i].id, report[i].points);
     }
     printf("\nBroken Cyclists:\n\n");
     for (i = 0; i < cyclists_num; i++) {
-	if (Cyclists[i]->broken)
-	    printf("Cyclist %d broken in lap %d\n", Cyclists[i]->id, Cyclists[i]->cur_lap);
+	if (report[i].broken)
+	    printf("Cyclist %d broken in lap %d\n", report[i].id, report[i].cur_lap);
     }
 }
 
@@ -157,13 +160,13 @@ void print_report() {
     for (i = 0; i < cyclists_num; i++) report[i] = *Cyclists[i];
     qsort(report, cyclists_num, sizeof(Cyclist), cmp_blocks);
     for (i = 0; i < cyclists_num; i++) {
-	if (!Cyclists[i]->broken) {
-	    if (q == 1) Cyclists[i]->points += 5;
-	    else if (q == 2) Cyclists[i]->points += 3;
-	    else if (q == 3) Cyclists[i]->points += 2;
-	    else if (q == 4) Cyclists[i]->points += 1;
+	if (!report[i].broken) {
+	    if (q == 1) report[i].points += 5;
+	    else if (q == 2) report[i].points += 3;
+	    else if (q == 3) report[i].points += 2;
+	    else if (q == 4) report[i].points += 1;
 	    
-	    printf("%d. Cyclist %d with %d points\n", q++, Cyclists[i]->id, Cyclists[i]->points);
+	    printf("%d. Cyclist %d with %d points [%d]\n", q++, report[i].id, report[i].points, report[i].blocks);
 	}
     }
     printf("\n\n");
@@ -261,7 +264,6 @@ int main(int argc, char * argv[]) {
 	}
 
 	if (lucky != -1) sim_time = 0.02;
-
 	track_print(Pista, track_size, cord_time);
 	
 	if (local_checkpoint < checkpoint) {

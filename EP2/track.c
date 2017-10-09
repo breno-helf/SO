@@ -44,7 +44,7 @@ void track_print(Track ** T, int len, double cur_time) {
 	}
 	event("\n");
     }
-    event("\n");
+    event("\n\n");
 }
 
 void track_destroy(Track ** T, int len) {
