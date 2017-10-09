@@ -1,3 +1,8 @@
+/*
+* * Breno Helfstein Moura       NUSP: 9790972
+* * Lucas Daher                 NUSP: 8991769
+*/
+
 #include "event.h"
 
 void event(const char *msg, ...) { 
