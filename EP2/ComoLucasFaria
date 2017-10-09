@@ -1,0 +1,16 @@
+-para posicao da pista tem que ser controlada por um mutex
+-barreira para manter todo mundo no mesmo instante de tempo. Pode ser árvore
+ou vetor coordenador, tanto faz. Acho que coordenador é mais fácil de implementar
+e já resolve o problema de sortear um ciclista pra andar a 90km/h
+-cada thread sorteia sua velocidade
+-todos os ciclistas tentam ficar o mais a esquerda possível
+-cada thread sorteia se vai quebrar
+-cada thread mantem um bool se já andou ou não no instante atual
+-quando uma thread tenta andar, se for bloqueada por alguém que não andou, fica travada
+até a da frente andar (resolve o problema que o estrela não manjou)
+-cada thread mantem a posicao em que está e sua pontuação. A posição precisa de um mutex
+também, porque todas as threads podem atualizar ela. Se um ciclista quebrar, tem que
+considerar que todos ultrapassaram ele e se ultrapassar alguém, tem que subtrair um
+do que foi ultrapassado.
+-quando um ciclista for andar pro lado, tem que olhar se não tem ninguém vindo antes de andar
+-manteria uma variavel no gerenciador para saber se é pra simular a cada 60 ou 20ms
