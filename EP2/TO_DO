@@ -1,0 +1,26 @@
+Coisas a se fazer:
+       (1) Implementar uma estrutura "ciclist" para saber em que posição da pista ele está e em que volta ele está.
+       (2) Implementar a thread "ciclista" que vai rodar em todos os ciclistas, essa thread deverá sortear a velocidade e mudar os parametros da estrutura ciclista
+       Primeira volta é 30Km/h (1m / 120ms)
+       As demais é sorteada da seguinte maneira:
+       	  Caso a volta anterior foi a 30Km/h 70% de chance de ser 60Km/h e 30% de chance de ser 30Km/h
+	  Caso a volta anterior foi a 60Km/h 50% de chance de ser 60Km/h e 50% de chance de ser 30Km/h
+       Nas duas ultimas voltas há a chance de se sortear um ciclista aaleatorio para fazer as DUAS voltas a 90Km/h (1m / 40ms) - 10% de chance
+       Cuidar para quando você escolher uma velocidade superior a 30Km/h você deve olhar todos os ciclistas diretamente a sua frente e ver se tem algum mais devagar que você
+       
+       (3) Implementar a barreira de sincronização
+       	   A simulação deve ser feita em intervalos de 60ms, com exceção das duas ultimas voltas, que podem ser feitas em intervalos de 20ms caso algum ciclista seja sorteado
+	   A barreira vai ser uma thread cordenadora.
+       (4) Implementar o vetor pista compartilhado
+       	   Vetor pista representa cada metro da pista, deve possuir a informação de quais cilcistas tao naquele pedaço da pista
+	   Deve ser uma variavel global (ponteiros plz)
+       (5) Implementar a quebra do cilista
+       	   A cada 15 voltas cada ciclista tem a chance de 1% de quebrar. Se quebrar sua thread deve ser destruida.
+	   Caso tenha apenas 5 ciclistas na prova, essa chance desaparace
+       
+       (6) Implementar relatorio a cada volta
+       	   Imprimir a posição de cada ciclista a cada volta (Acho que faz sentido imprimir um par (posição, volta) e imprimir a volta quando o primeiro ciclista começa aquela volta).
+       	   Imprimir ontuação acumulada de cada ciclista, a cada 10 voltas os 4 primeiros cilcistas ganham 5, 3, 2 e 1 pontos respectivamente. Se um ciclista completa uma volta sobre todos os outros, ganha 20 pontos.
+	   Quando a prova terminar deve ser impresso o tempo de cada ciclista e sua pontuação. Cilcistas quebrados devem ser identificados aqui (informando a volta em que quebraram).
+	   
+	   Implementar o debug, que printa a pista a cada 60ms (20ms nas ultimas 2 voltas em caso de sorteio).
