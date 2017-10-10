@@ -64,21 +64,34 @@ void * ciclista(void * ptr) {
 	while (!ok) {
 	    my_speed = 500;
 	    int i, qtd = 0;
-	    for (i = C->i; Pista[i][C->j].cyclist != NULL && qtd < track_size;
+	    Cyclist * nxt;
+	    for (i = C->i; (nxt = reading_position(Pista, i, C->j)) != NULL && qtd < track_size;
 		 i = (i + 1) % track_size, qtd++) {
 		
-		my_speed = min(my_speed, max(Pista[i][C->j].cyclist->cur_speed, 30));
+		my_speed = min(my_speed, max(nxt->cur_speed, 30));
+		stop_reading_position(Pista, i, C->j);
 	    }
+	    stop_reading_position(Pista, i, C->j);
 	    if (my_speed == C->cur_speed) ok = 1;
 	    else {
-		if (C->j > 0 && Pista[i][C->j - 1].cyclist == NULL
-		    && Pista[(i - 1 + track_size) % track_size][C->j - 1].cyclist == NULL) {
+		Cyclist * side;
+		Cyclist * behind;
+		side = reading_position(Pista, i, C->j - 1);
+		behind = reading_position(Pista, (i - 1 + track_size) % track_size, C->j - 1); 
+		if (C->j > 0 && side == NULL
+		    && behind == NULL) {
 		    fprintf(stderr, "Ultrapassando coeh %d %d %d\n", C->id, C->i, C->j);
+		    stop_reading_position(Pista, i, C->j - 1);
+		    stop_reading_position(Pista, (i - 1 + track_size) % track_size, C->j - 1); 
 		    track_leaving_cyclist(Pista, C->i, C->j);
 		    C->j--;
 		    track_arriving_cyclist(Pista, C->i, C->j, C);
 		}
-		else ok = 1;
+		else {
+		    ok = 1;
+		    stop_reading_position(Pista, i, C->j - 1);
+		    stop_reading_position(Pista, (i - 1 + track_size) % track_size, C->j - 1); 
+		}
 	    }
 	}
 
@@ -139,7 +152,6 @@ void * ciclista(void * ptr) {
 	}
 
 	C->arrive = 1;
-	//fprintf(stderr, "Thread %d chegou!\n", C->id);
 	while (C->cont == 0);
 	C->cont = 0;
     }
@@ -270,18 +282,17 @@ int main(int argc, char * argv[]) {
 		continue;
 	    else {
 		while (Cyclists[i]->arrive == 0 && Cyclists[i]->finished == 0 && Cyclists[i]->broken == 0);
-		Cyclists[i]->arrive = 0;
+		Cyclists[i]->arrive = 0;	
 	    }
 	}
 
 	if (lucky != -1) sim_time = 0.02;
-	
+	track_print(Pista, track_size, cord_time);
 	if (local_checkpoint < checkpoint) {
-	    track_print(Pista, track_size, cord_time);
 	    print_report();
 	    local_checkpoint = checkpoint;
-	}
-	
+	}	
+
 	for (i = 0; i < cyclists_num; i++) {
 	    if (Cyclists[i]->finished || Cyclists[i]->broken)
 		continue;
@@ -289,6 +300,7 @@ int main(int argc, char * argv[]) {
 		Cyclists[i]->cont = 1;
 	    }
 	}
+		
     }
     
     for (i = 0; i < cyclists_num; i++) {

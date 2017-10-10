@@ -17,6 +17,7 @@ Track ** track_create(int len) {
 	T[i] = (Track *) malloc(sizeof(Track) * 10);
 	for (j = 0; j < 10; j++) {
 	    T[i][j].mutex = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
+	    T[i][j].reading = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
 	    pthread_mutex_init(T[i][j].mutex, NULL);
 	}
     }
@@ -25,13 +26,26 @@ Track ** track_create(int len) {
 
 void track_arriving_cyclist(Track ** T, int i, int j, Cyclist * C) {
     pthread_mutex_lock(T[i][j].mutex);
+    pthread_mutex_lock(T[i][j].reading);
     T[i][j].cyclist = C;
+    pthread_mutex_unlock(T[i][j].reading);
 }
 
 void track_leaving_cyclist(Track ** T, int i, int j) {
+    pthread_mutex_lock(T[i][j].reading);
     assert(T[i][j].cyclist != NULL);
     T[i][j].cyclist = NULL;
     pthread_mutex_unlock(T[i][j].mutex);
+    pthread_mutex_unlock(T[i][j].reading);
+}
+
+Cyclist * reading_position(Track ** T, int i, int j) {
+    pthread_mutex_lock(T[i][j].reading);
+    return T[i][j].cyclist;
+}
+
+void stop_reading_position(Track ** T, int i, int j) {
+    pthread_mutex_unlock(T[i][j].reading);
 }
 
 void track_print(Track ** T, int len, double cur_time) {
