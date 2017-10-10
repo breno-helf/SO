@@ -16,6 +16,10 @@ int min (int a, int b) {
     return (a < b) ? a : b;
 }
 
+int max (int a, int b) {
+    return (a > b) ? a : b;
+}
+
 Cyclist ** Cyclists;
 Cyclist * report;
 Track ** Pista;
@@ -47,7 +51,8 @@ void * ciclista(void * ptr) {
     Cyclist * C = (Cyclist *) ptr;
     double dist = 0;
     C->cur_speed = 30;
-    
+
+    fprintf(stderr, "Ciclista %d pos (%d, %d)\n", C->id, C->i, C->j);    
     while (C->cur_lap < laps_num) {	
 	C->cur_time += sim_time;
 
@@ -55,22 +60,28 @@ void * ciclista(void * ptr) {
 
 	/* Verify cyclists right in front and try to surpass */
 	int ok = 0;
-	int my_speed;
+	int my_speed = C->cur_speed;
 	while (!ok) {
-	    my_speed = 500;	
+	    my_speed = 500;
 	    int i, qtd = 0;
 	    for (i = C->i; Pista[i][C->j].cyclist != NULL && qtd < track_size;
 		 i = (i + 1) % track_size, qtd++) {
-		my_speed = min(my_speed, Pista[i][C->j].cyclist->cur_speed);
+		
+		my_speed = min(my_speed, max(Pista[i][C->j].cyclist->cur_speed, 30));
 	    }
 	    if (my_speed == C->cur_speed) ok = 1;
 	    else {
-		if (C->j > 0 && Pista[i][C->j - 1].cyclist == NULL)
+		if (C->j > 0 && Pista[i][C->j - 1].cyclist == NULL
+		    && Pista[(i - 1 + track_size) % track_size][C->j - 1].cyclist == NULL) {
+		    fprintf(stderr, "Ultrapassando coeh %d %d %d\n", C->id, C->i, C->j);
+		    track_leaving_cyclist(Pista, C->i, C->j);
 		    C->j--;
+		    track_arriving_cyclist(Pista, C->i, C->j, C);
+		}
 		else ok = 1;
-	    }	    
-	}	
-	
+	    }
+	}
+
 	if (sim_time == 0.06) {
 	    dist += (my_speed == 30) ? .5 : 1;
 	} else if (sim_time == 0.02) {
@@ -126,7 +137,7 @@ void * ciclista(void * ptr) {
 	    pthread_mutex_unlock(checkpoint_mutex);
 	    
 	}
-	
+
 	C->arrive = 1;
 	//fprintf(stderr, "Thread %d chegou!\n", C->id);
 	while (C->cont == 0);
@@ -264,9 +275,9 @@ int main(int argc, char * argv[]) {
 	}
 
 	if (lucky != -1) sim_time = 0.02;
-	track_print(Pista, track_size, cord_time);
 	
 	if (local_checkpoint < checkpoint) {
+	    track_print(Pista, track_size, cord_time);
 	    print_report();
 	    local_checkpoint = checkpoint;
 	}

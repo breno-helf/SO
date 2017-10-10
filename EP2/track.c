@@ -30,8 +30,8 @@ void track_arriving_cyclist(Track ** T, int i, int j, Cyclist * C) {
 
 void track_leaving_cyclist(Track ** T, int i, int j) {
     assert(T[i][j].cyclist != NULL);
-    pthread_mutex_unlock(T[i][j].mutex);
     T[i][j].cyclist = NULL;
+    pthread_mutex_unlock(T[i][j].mutex);
 }
 
 void track_print(Track ** T, int len, double cur_time) {
