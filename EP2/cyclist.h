@@ -22,10 +22,12 @@ typedef struct Cyclist {
     int blocks;
     char finished;
     char broken;
-    double cur_time;    
+    double cur_time;
+    double dist;
     int cont;
     int arrive;
     pthread_t * thread;
+    int voltas_vantagem;
 } Cyclist;
 
 Cyclist * cyclist_create(int id, int i, int j);

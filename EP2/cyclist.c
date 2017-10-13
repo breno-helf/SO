@@ -18,6 +18,7 @@ Cyclist * cyclist_create(int id, int i, int j) {
     C->cont = 0;
     C->arrive = 0;
     C->thread = (pthread_t *) malloc(sizeof(pthread_t));
+    C->voltas_vantagem = 0;
     return C;
 }
 
