@@ -289,9 +289,9 @@ void print_lap_log(int n) {
     //printf("LapPlacing[%d][1] = %d\n", n, LapPlacing[n][1]);
     
     for (int i = 0; i < cyclists_num; i++) {
-        //if (LapPlacing[n][i + 2] != -1) {
+        if (LapPlacing[n][i + 2] != -1) {
             printf("Cyclist %d completed lap %d in place #%d\n", i, n, LapPlacing[n][i + 2]);
-        //}
+        }
     }
     printf("\n");
 }
@@ -438,7 +438,7 @@ int main(int argc, char * argv[]) {
             }
         }
         
-        for (int i = next_to_print; i < laps_num; i++) {
+        for (int i = next_to_print; i <= laps_num; i++) {
             LapPlacing[i][1] += LapPlacing[i][0];
             LapPlacing[i][0] = 0;
             if (LapPlacing[i][1] > cyclists_num - broken) {
@@ -474,8 +474,6 @@ int main(int argc, char * argv[]) {
 	    }
     }
 
-    print_lap_log(next_to_print);
-    if ((next_to_print %10) == 0) print_10_log();
     print_final_log();
     
     track_destroy(Pista, track_size);
