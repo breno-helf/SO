@@ -18,6 +18,7 @@ typedef struct Cyclist {
     int seen;
     int cur_lap;
     int cur_speed;
+    int my_speed;
     int points;
     int blocks;
     char finished;
@@ -25,7 +26,11 @@ typedef struct Cyclist {
     double cur_time;
     double dist;
     int cont;
+    pthread_mutex_t * cont_mutex;
+    pthread_cond_t * cont_cond;
     int arrive;
+    pthread_mutex_t * arrive_mutex;
+    pthread_cond_t * arrive_cond;
     pthread_t * thread;
     int voltas_vantagem;
 } Cyclist;

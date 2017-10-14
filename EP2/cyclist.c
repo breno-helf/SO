@@ -17,6 +17,14 @@ Cyclist * cyclist_create(int id, int i, int j) {
     C->cur_time = 0.0;
     C->cont = 0;
     C->arrive = 0;
+    C->cont_mutex = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
+    C->arrive_mutex = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
+    C->cont_cond = (pthread_cond_t *) malloc(sizeof(pthread_cond_t));
+    C->arrive_cond =  (pthread_cond_t *) malloc(sizeof(pthread_cond_t));
+    pthread_mutex_init(C->cont_mutex, NULL);
+    pthread_mutex_init(C->arrive_mutex, NULL);
+    pthread_cond_init(C->cont_cond, NULL);
+    pthread_cond_init(C->arrive_cond, NULL);    
     C->thread = (pthread_t *) malloc(sizeof(pthread_t));
     C->voltas_vantagem = 0;
     return C;

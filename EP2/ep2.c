@@ -17,6 +17,10 @@ int min (int a, int b) {
     return (a < b) ? a : b;
 }
 
+double minF (double a, double b) {
+    return (a < b) ? a : b;
+}
+
 int max (int a, int b) {
     return (a > b) ? a : b;
 }
@@ -85,15 +89,11 @@ pthread_mutex_t * LapPlacing_mutex;
 void try_break(Cyclist * C) {
     int rnd = rand() % 100;
     if (rnd == 0) {
-	pthread_mutex_lock(run_mutex);
 	if (running > 5) {
-	    running--;
-	    pthread_cancel(*(C->thread));
 	    C->broken = 1;
 	    broken++;
 	    printf("The cyclist %d has just broken at %lf\n", C->id, C->cur_time); 
-	}
-	pthread_mutex_unlock(run_mutex);
+	}	
     }
 }
 
@@ -102,83 +102,32 @@ void * ciclista(void * ptr) {
     C->dist = 0;
     C->cur_speed = 30;
 
-    fprintf(stderr, "Ciclista %d pos (%d, %d)\n", C->id, C->i, C->j);    
     while (C->cur_lap < laps_num) {	
 	C->cur_time += sim_time;
 
 	if (C->id == lucky) C->cur_speed = 90;
 
-	/* Verify cyclists right in front and try to surpass */
-	int ok = 0;
-	int my_speed = C->cur_speed;
-	while (!ok) {
-	    my_speed = 500;
-	    int i, qtd = 0;
-	    Cyclist * nxt = NULL;
-	    for (i = C->i; (nxt = reading_position(Pista, i, C->j)) != NULL && qtd < track_size;
-	    	 i = (i + 1) % track_size, qtd++) {
-		assert(nxt != NULL);
-		my_speed = min(my_speed, max(nxt->cur_speed, 30));
-		stop_reading_position(Pista, i, C->j);
-	    }
-	    stop_reading_position(Pista, i, C->j);
-	    if (my_speed == C->cur_speed) ok = 1;
-	    else {
-		assert(qtd > 1);
-		Cyclist * side = NULL;
-		Cyclist * behind = NULL;
-
-		if (C->j > 0) {
-		    side = reading_position(Pista, i, C->j - 1);
-		    behind = reading_position(Pista, (i - 1 + track_size) % track_size, C->j - 1); 
-		}
-		
-		if (C->j > 0 && side == NULL
-		    && behind == NULL) {
-		    fprintf(stderr, "Ultrapassando coeh %d %d %d\n", C->id, C->i, C->j);
-		    stop_reading_position(Pista, i, C->j - 1);
-		    fprintf(stderr, "1\n");
-		    stop_reading_position(Pista, (i - 1 + track_size) % track_size, C->j - 1); 
-		    fprintf(stderr, "2\n");
-		    track_leaving_cyclist(Pista, C->i, C->j);
-		    fprintf(stderr, "3\n");
-		    C->j--;
-		    track_arriving_cyclist(Pista, C->i, C->j, C);
-		    fprintf(stderr, "Ultrapassei coeh %d %d %d\n", C->id, C->i, C->j);
-		}
-		else {
-		    ok = 1;
-		    if (C->j > 0) {
-			stop_reading_position(Pista, i, C->j - 1);
-			stop_reading_position(Pista, (i - 1 + track_size) % track_size, C->j - 1); 
-		    }
-		}
-	    }
-	}
-
-	fprintf(stderr, "Decided speed %d\n", C->id);
-	
 	if (sim_time == 0.06) {
-	    C->dist += (my_speed == 30) ? .5 : 1;
+	    C->dist += (C->my_speed == 30) ? .5 : 1;
 	} else if (sim_time == 0.02) {
-	    if (my_speed == 90)
+	    if (C->my_speed == 90)
 		C->dist += .5;
-	    else if (my_speed == 60)
+	    else if (C->my_speed == 60)
 		C->dist += 1.0/3.0;
-	    else if (my_speed == 30)
+	    else if (C->my_speed == 30)
 		C->dist += 1.0/6.0;
 	}
 
+	//fprintf(stderr, "[%d] %d %.3lf %d\n", C->id, C->my_speed, C->dist, C->cur_lap);
+		
 	if (C->dist >= 1.0) {
-	    /* Anda pra frente */
-	    fprintf(stderr, "--> %d andando\n", C->id);
+	    /* Anda pra frente */	    	   
 	    track_leaving_cyclist(Pista, C->i, C->j);
 	    C->i++;
 	    C->i %= track_size;
 	    track_arriving_cyclist(Pista, C->i, C->j, C);
 	    C->blocks++;
 	    C->dist = 0;
-	    fprintf(stderr, "--> %d andou\n", C->id);
 	}
 	
 	if (C->dist == 0 && C->i == 0) {
@@ -198,30 +147,15 @@ void * ciclista(void * ptr) {
 		if (rnd <= 5) C->cur_speed = 60;
 		else C->cur_speed = 30;
 	    }
-
-	    if (C->cur_lap % 15 == 0) try_break(C);
-
-	    pthread_mutex_lock(checkpoint_mutex);
-	    if (C->cur_lap % 10 == 0 &&
-		C->cur_lap / 10 > checkpoint) {
-		checkpoint++;
-	    }
-	    if (laps_num - C->cur_lap == 2
-		&& lucky == -1) {
-		rnd = rand() % 10;
-		/* Sortear o cara cm 90 */
-		if (rnd == 0) {
-		    lucky = rand() % cyclists_num;
-		    while (Cyclists[lucky]->broken) {
-			lucky = rand() % cyclists_num;
-		    }		    
-		} else lucky = -2;		
-	    }
 	    
-	    pthread_mutex_unlock(checkpoint_mutex);
-	    
+	    if (C->cur_lap % 15 == 0) {
+		try_break(C);
+		if (C->broken) break;
+	    }
 	}
-        
+
+	
+	
         int found = 0;
         if (C->blocks > PlacingDist[12]) {
             pthread_mutex_lock(Placing_mutex);
@@ -242,16 +176,31 @@ void * ciclista(void * ptr) {
             pthread_mutex_unlock(Placing_mutex);
         }
 
+	if (C->cur_lap >= laps_num) break;
 	
-	//fprintf(stderr, "Thread %d arrived\n", C->id);
+	//fprintf(stderr, "Thread %d arrived %d\n", C->id, C->cur_lap);
+	pthread_mutex_lock(C->arrive_mutex);
 	C->arrive = 1;
-	while (C->cont == 0);
+	pthread_cond_signal(C->arrive_cond);
+	pthread_mutex_unlock(C->arrive_mutex);
+	
+	pthread_mutex_lock(C->cont_mutex);
+	while (C->cont == 0) {
+	    pthread_cond_wait(C->cont_cond, C->cont_mutex);
+	}
 	C->cont = 0;
+	pthread_mutex_unlock(C->cont_mutex);
     }
+    track_leaving_cyclist(Pista, C->i, C->j);
     pthread_mutex_lock(run_mutex);
     running--;
     C->finished = 1;
     pthread_mutex_unlock(run_mutex);
+
+    pthread_mutex_lock(C->arrive_mutex);
+    C->arrive = 1;
+    pthread_cond_signal(C->arrive_cond);
+    pthread_mutex_unlock(C->arrive_mutex);   
     
 }
 
@@ -301,11 +250,7 @@ void print_10_log() {
     printf("\n");
 }
 
-void print_lap_log(int n) {
-    
-    //printf("LapPlacing[%d][0] = %d\n", n, LapPlacing[n][0]);
-    //printf("LapPlacing[%d][1] = %d\n", n, LapPlacing[n][1]);
-    
+void print_lap_log(int n) {    
     for (int i = 0; i < cyclists_num; i++) {
         if (LapPlacing[n][i + 2] != -1) {
             printf("Cyclist %d completed lap %d in place #%d\n", i, n, LapPlacing[n][i + 2]);
@@ -415,19 +360,33 @@ int main(int argc, char * argv[]) {
 	    if (Cyclists[i]->finished || Cyclists[i]->broken)
 		continue;
 	    else {
-		while (Cyclists[i]->arrive == 0 && Cyclists[i]->finished == 0 && Cyclists[i]->broken == 0);
-		Cyclists[i]->arrive = 0;	
+		pthread_mutex_lock(Cyclists[i]->arrive_mutex);
+		while (Cyclists[i]->arrive == 0 && Cyclists[i]->finished == 0) {
+		    pthread_cond_wait(Cyclists[i]->arrive_cond, Cyclists[i]->arrive_mutex);
+		}
+		Cyclists[i]->arrive = 0;
+		pthread_mutex_unlock(Cyclists[i]->arrive_mutex);
 	    }
+
+	    if (laps_num - Cyclists[i]->cur_lap == 2
+		&& lucky == -1) {
+		int rnd;
+		rnd = rand() % 10;
+		/* Sortear o cara cm 90 */
+		if (rnd == 0) {
+		    lucky = rand() % cyclists_num;
+		    while (Cyclists[lucky]->broken) {
+			lucky = rand() % cyclists_num;
+		    }		    
+		} else lucky = -2;		
+	    }	    
+
 	}
 
+	
         if (PlacingDist[0] - PlacingDist[1] >= track_size * (1 + Cyclists[PlacingID[0]]->voltas_vantagem)) {
             Cyclists[PlacingID[0]]->voltas_vantagem++;
-            Cyclists[PlacingID[0]]->points += 10;
-            
-            /*debug
-	      printf("Volta de vantagem do %d\nPlacingDist[0] = %d, %d\n", PlacingID[0], PlacingDist[0], Cyclists[PlacingID[0]]->blocks);
-	      printf("PlacingDist[1] = %d, %d\n", PlacingDist[1], Cyclists[PlacingID[1]]->blocks);
-            */
+            Cyclists[PlacingID[0]]->points += 10;            
         }
         
         
@@ -438,19 +397,15 @@ int main(int argc, char * argv[]) {
                 PlacingDist[i] % (track_size * 10) == 0) {
                 if (PlacingDist[i] == PlacingDist[0]) {
                     Cyclists[PlacingID[i]]->points += 5;
-                    //printf("%d marcou 5 pontos em %lf\n", PlacingID[i], Cyclists[PlacingID[i]]->cur_time);
                 }
                 else if (PlacingDist[i] == PlacingDist[1]) {
                     Cyclists[PlacingID[i]]->points += 3;
-                    //printf("%d marcou 3 pontos em %lf\n", PlacingID[i], Cyclists[PlacingID[i]]->cur_time);
                 }
                 else if (PlacingDist[i] == PlacingDist[2]) {
                     Cyclists[PlacingID[i]]->points += 2;
-                    //printf("%d marcou 2 pontos em %lf\n", PlacingID[i], Cyclists[PlacingID[i]]->cur_time);
                 }
                 else if (PlacingDist[i] == PlacingDist[3]) {
                     Cyclists[PlacingID[i]]->points += 1;
-                    //printf("%d marcou 1 pontos em %lf\n", PlacingID[i], Cyclists[PlacingID[i]]->cur_time);
                 }
                 if (PlacingDist[i] == track_size * laps_num) PlacingDist[i]++;
             }
@@ -468,19 +423,66 @@ int main(int argc, char * argv[]) {
         
 	if (lucky != -1) sim_time = 0.02;
 	track_print(Pista, track_size, cord_time);
-	if (local_checkpoint < checkpoint) {
-	    //print_report();
-	    local_checkpoint = checkpoint;
-	}	
+	
+	for (i = 0; i < cyclists_num; i++) {
+	    /* Verify cyclists right in front and try to surpass */
+	    Cyclist * C = Cyclists[i];
+	    if (C->broken || C->finished) continue;
+	    int ok = 0;
+	    int my_speed = C->cur_speed;
+	    double my_dist = C->dist;
+	    while (!ok) {
+		my_speed = C->cur_speed;
+		my_dist = C->dist;
+		int i, qtd = 0;
+		Cyclist * nxt = Pista[C->i][C->j].cyclist;	
+		for (i = C->i; nxt != NULL && qtd < track_size;
+		     i = (i + 1) % track_size, qtd++) {
+		    assert(nxt != NULL);
+		    my_speed = min(my_speed, max(nxt->cur_speed, 30));
+		    my_dist = minF(my_dist, nxt->dist);
+		    nxt = Pista[(i + 1) % track_size][C->j].cyclist;
+		}
+		if (my_speed == C->cur_speed) ok = 1;
+		else {
+		    assert(qtd != 0);
+		    Cyclist * side = NULL;
+		    Cyclist * behind = NULL;
+
+		    if (C->j > 0) {
+			side = Pista[C->i][C->j - 1].cyclist;
+			behind = Pista[(C->i - 1 + track_size) % track_size][C->j - 1].cyclist;
+		    }
+		
+		    if (C->j > 0 && side == NULL
+			&& behind == NULL) {
+			track_leaving_cyclist(Pista, C->i, C->j);
+			C->j--;
+			track_arriving_cyclist(Pista, C->i, C->j, C);
+		    }
+		    else {
+			ok = 1;
+		    }
+		}
+	    }
+	    C->my_speed = my_speed;
+	    C->dist = minF(C->dist, my_dist);
+	}
 
 	for (i = 0; i < cyclists_num; i++) {
+	    if (Cyclists[i]->finished && Cyclists[i]->broken) {
+		pthread_join(*(Cyclists[i]->thread), NULL);
+		Cyclists[i]->finished = 0;
+	    }
 	    if (Cyclists[i]->finished || Cyclists[i]->broken)
 		continue;
 	    else {
+		pthread_mutex_lock(Cyclists[i]->cont_mutex);
 		Cyclists[i]->cont = 1;
+		pthread_cond_signal(Cyclists[i]->cont_cond);
+		pthread_mutex_unlock(Cyclists[i]->cont_mutex);
 	    }
-	}
-		
+	}	
     }
     
     for (i = 0; i < cyclists_num; i++) {
@@ -493,7 +495,9 @@ int main(int argc, char * argv[]) {
     }
 
     print_final_log();
+
     
+    /* Freeing variables */
     track_destroy(Pista, track_size);
     for (i = 0; i < cyclists_num; i++) {
 	free(Cyclists[i]);	
