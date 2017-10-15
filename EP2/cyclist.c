@@ -51,3 +51,12 @@ int cmp_points(const void * a, const void * b) {
 
     return 0;
 }
+
+void cyclist_destroy(Cyclist * C) {
+    free(C->thread);
+    free(C->cont_mutex);
+    free(C->cont_cond);
+    free(C->arrive_mutex);
+    free(C->arrive_cond);
+    free(C);
+}

@@ -17,7 +17,6 @@ Track ** track_create(int len) {
 	T[i] = (Track *) malloc(sizeof(Track) * 10);
 	for (j = 0; j < 10; j++) {
 	    T[i][j].mutex = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
-	    T[i][j].reading = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
 	    pthread_mutex_init(T[i][j].mutex, NULL);
 	}
     }
@@ -50,8 +49,12 @@ void track_print(Track ** T, int len, double cur_time) {
 }
 
 void track_destroy(Track ** T, int len) {
-    int i;
-    for (i = 0; i < len; i++)
+    int i, j;
+    for (i = 0; i < len; i++) {
+	for (j = 0; j < 10; j++) {
+	    free(T[i][j].mutex);
+	}
 	free(T[i]);
+    }
     free(T);
 }

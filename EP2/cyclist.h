@@ -41,5 +41,6 @@ int cmp_blocks(const void * a, const void * b);
 
 int cmp_points(const void * a, const void * b);
 
+void cyclist_destroy(Cyclist * C);
 
 #endif

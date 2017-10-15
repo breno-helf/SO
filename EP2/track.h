@@ -13,7 +13,6 @@
 
 typedef struct Track {
     pthread_mutex_t * mutex;
-    pthread_mutex_t * reading;
     Cyclist * cyclist;
 } Track; 
 

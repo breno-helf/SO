@@ -500,9 +500,16 @@ int main(int argc, char * argv[]) {
     /* Freeing variables */
     track_destroy(Pista, track_size);
     for (i = 0; i < cyclists_num; i++) {
-	free(Cyclists[i]);	
+	cyclist_destroy(Cyclists[i]);	
     }
     free(Cyclists);
+    free(run_mutex);
+    free(checkpoint_mutex);
+    free(Placing_mutex);
+    free(LapPlacing_mutex);
+    for (i = 0; i <= laps_num; i++)
+	free(LapPlacing[i]);
+    free(LapPlacing);
     
     return 0;
 }
