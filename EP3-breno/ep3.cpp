@@ -72,8 +72,8 @@ trace * load_file(string file_name) {
 
 int main(int argc, char * argv[]) {
     trace * cur_trace;
-    int type = -1;
-    
+    int mem_type = -1;
+    int pag_type = -1;
     while (true) {
 	string s;
 	cin >> s;
@@ -88,12 +88,14 @@ int main(int argc, char * argv[]) {
 	    // 	cout << A.type << ' ' << A.t << ' ' << A.process_id << ' ' << A.acess_id << '\n';
 	    // }
 	    
-	} else if (s == "espaço") {
-	    // Define a quantidade de espaço
+	} else if (s == "espaco") {
+	    // Muda o algortimo de gerenciamento de espaço
+	    cin >> mem_type;
 	} else if (s == "substitui") {
-	    cin >> type;
+	    // Muda o algortimo de gerenciamento de pagina
+	    cin >> pag_type;
 	} else if (s == "executa") {
-	    if (type == -1)
+	    if (mem_type == -1 || pag_type == -1)
 		cerr << "Voce deve informar o tipo de simulador a ser executado\n";
 	    else {
 		// Executa o algoritimo
