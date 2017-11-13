@@ -40,20 +40,30 @@ trace * load_file(string file_name) {
 	objs = stringToVec(line);
 	if ((int)objs.size() == 2) {
 	    if (objs[1] == "COMPACTAR") {
-		ret->compact.push(atof(objs[1].c_str()));
+		action compact = action(4, atof(objs[1].c_str()), -1, -1);
+		ret->action_queue.push(compact);
 	    }
 	} else {
 	    process p;
+	    int PID = ret->process_vec.size();
 	    p.t0 = atof(objs[0].c_str());
 	    p.tf = atof(objs[1].c_str());
 	    p.b  = atoi(objs[2].c_str());
 	    p.name = objs[3];
+	    action initialize = action(2, p.t0, PID, -1);
+	    action finalize   = action(3, p.tf, PID, -1);
+	    
 	    for (int i = 4; i < (int)objs.size(); i += 2) {
 		acess A;
+		int AID = p.mem_acess.size();
+		
 		A = acess(atoi(objs[i].c_str()), atof(objs[i + 1].c_str()));
-		p.mem_acess.push(A);
+		ret->action_queue.push(action(1, A.t, PID, AID)); 
+		p.mem_acess.push_back(A);
 	    }
-	    ret->process_queue.push(p);
+	    ret->process_vec.push_back(p);
+	    ret->action_queue.push(initialize);
+	    ret->action_queue.push(finalize);
 	}	
     }
     trace_file.close();
@@ -72,8 +82,15 @@ int main(int argc, char * argv[]) {
 	    string file_name;
 	    cin >> file_name;
 	    cur_trace = load_file(file_name);
+
+	    // while (!(cur_trace->action_queue.empty())) {
+	    // 	action A = cur_trace->action_queue.top();
+	    // 	cur_trace->action_queue.pop();
+	    // 	cout << A.type << ' ' << A.t << ' ' << A.process_id << ' ' << A.acess_id << '\n';
+	    // }
+	    
 	} else if (s == "espaço") {
-	    // Define o numero de espaços
+	    // Define a quantidade de espaço
 	} else if (s == "substitui") {
 	    cin >> type;
 	} else if (s == "executa") {
