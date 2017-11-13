@@ -28,7 +28,6 @@ trace * load_file(string file_name) {
     getline(trace_file, line);
     objs = stringToVec(line);
 
-    cout << objs.size() << '\n';    
     assert((int)objs.size() == 4);
     
     ret->total = atoi(objs[0].c_str());
