@@ -6,7 +6,7 @@ vector<string> stringToVec(string s) {
     vector<string> ret;
     string r = "";
     for (int i = 0; i < (int)s.size(); i++) {
-	if (isspace(s[i])) r += s[i];
+	if (!isspace(s[i])) r += s[i];
 	else {
 	    if (r != "") {
 		ret.push_back(r);
@@ -28,6 +28,7 @@ trace * load_file(string file_name) {
     getline(trace_file, line);
     objs = stringToVec(line);
 
+    cout << objs.size() << '\n';    
     assert((int)objs.size() == 4);
     
     ret->total = atoi(objs[0].c_str());
