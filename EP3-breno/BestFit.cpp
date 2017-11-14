@@ -64,6 +64,13 @@ class BiFile {
             file.close();
         }
     
+        void copy(BiFile *origin, int pos, int s, int dest) {
+            char *b = new char[s];
+            origin->read(pos, s, b);
+            file.seekp(dest);
+            file.write(b, s);
+        }
+        
         void print() {
             char *buff = new char[size];
             this->read(0, size, buff);
