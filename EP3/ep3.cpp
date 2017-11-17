@@ -83,9 +83,9 @@ void simulate(trace * T, int mem_type, int pag_type) {
     // Cria as classes dos tipos que você quer
 
 
-    for (int cur_time = 0; !(T->action_queue.empty(); cur_time++) {
+    for (int cur_time = 0; !(T->action_queue.empty()); cur_time++) {
 	    // Tempo atual eh cur_time 
-	    while(!(T->action_queue.empty()) && T->action_queue.top() == cur_time) {
+	while((!(T->action_queue.empty())) && (T->action_queue.top()).t == cur_time) {
 		action A = T->action_queue.top();
 		T->action_queue.pop();
 		
