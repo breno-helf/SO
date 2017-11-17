@@ -6,8 +6,8 @@ using namespace std;
 
 BiFile::BiFile(int s, char *st) {
     size = s;
-    fopen(st, "wb+");
-    fclose(st);
+    FILE * F = fopen(st, "wb+");
+    fclose(F);
     file.open(st, std::fstream::in | std::fstream::out | std::fstream::binary);
     aux = new char[1];
     aux[0] = -1;
