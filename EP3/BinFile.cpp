@@ -15,7 +15,6 @@ BiFile::BiFile(int s, char *st) {
         
 BiFile::~BiFile() {
     delete[] aux;
-    delete file;
 }
         
 void BiFile::write(int pos, int s, char c) {

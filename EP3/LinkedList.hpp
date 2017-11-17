@@ -17,7 +17,7 @@ struct node {
 
 class LinkedList {
 private:
-    void *destroy(node *n);
+    void destroy(node *n);
         
 public:
     node *head;

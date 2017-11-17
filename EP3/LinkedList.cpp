@@ -1,7 +1,7 @@
 #include "LinkedList.hpp"
 using namespace std;
 
-void * LinkedList::destroy(node * n) {
+void LinkedList::destroy(node * n) {
     if (n->next != NULL) destroy(n->next);
     delete[] n;
 }
