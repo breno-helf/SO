@@ -14,9 +14,9 @@ void LinkedList::print() {
     node *curr;
     curr = head;
     while (curr != NULL) {
-	cout << "pid = " << (short) curr->pid;
-	cout << " size = " << curr->size;
-	cout << " pos = " << curr->pos << "\n";
+	cerr << "pid = " << (short) curr->pid;
+	cerr << " size = " << curr->size;
+	cerr << " pos = " << curr->pos << "\n";
 	curr = curr->next;
     }
 }

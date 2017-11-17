@@ -42,10 +42,10 @@ void BiFile::print() {
     char *buff = new char[size];
     this->read(0, size, buff);
     for (int i = 0; i < size; i++) {
-	if (buff[i] < 0) cout << " ";
-	else if (buff[i] < 10) cout << "  ";
-	else if (buff[i] < 100) cout << " ";
-	cout << (short) buff[i] << " ";
+	if (buff[i] < 0) cerr << " ";
+	else if (buff[i] < 10) cerr << "  ";
+	else if (buff[i] < 100) cerr << " ";
+	cerr << (short) buff[i] << " ";
     }
-    cout << "\n";
+    cerr << "\n";
 }

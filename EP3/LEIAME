@@ -1,0 +1,30 @@
+# Breno Helfstein Moura       NUSP: 9790972
+# Lucas Daher                 NUSP: 8991769
+
+Todo o código fonte do EP3 foi feito em C++.
+
+Para compilar o EP você deve rodar os comandos do Makefile:
+     - "make all" ou "make ep3" para compilar o ep3 e criar um executável de nome ep3
+
+Para executar o binário do ep3 você deve executar
+     - "./ep3"
+
+Ao executar esse comando será esperado os comandos para que ocorra a interação (Comandos estes especificados no enunciado):
+     - carrega <arquivo>
+     - espaço  <num>
+     - substitui <num>
+     - executa <intervalo>
+     - sai
+
+sendo que os gerenciadores de memória são:
+      1. Best Fit
+      2. Worst Fit
+      3. Quick Fit
+
+E os gerenciadores de página são:
+      1. Optimal
+      2. First-In, First-Out
+      3. Least Recently Used (Segunda Versão)
+      4. Least Recently Used (Quarta Versão)
+
+As informações impressas pelo programa na stderr, utilizando o comando cerr do C++.
