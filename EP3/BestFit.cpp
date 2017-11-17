@@ -4,7 +4,7 @@
 #include "BestFit.hpp"
 using namespace std;
 
-    
+
 void BestFit::mergeWhite() {
     node *curr;
     curr = l->head;
@@ -21,10 +21,12 @@ void BestFit::mergeWhite() {
 }
     
     
-BestFit::BestFit(BiFile &realMem, int t, int q) {
-    file = &realMem;
-    total = t;
-    s = q;
+BestFit::BestFit(BiFile &virMem, int total, int virt, int s, int p) {
+    file = &virMem;
+    this->total = total;
+    this->virt = virt;
+    this->s = s;
+    pSize = p;
     l = new LinkedList(); 
     l->head = new node;
     l->head->pid = -1;
@@ -38,9 +40,12 @@ BestFit::~BestFit() {
 }
         
 bool BestFit::insert(char pid, int b) {
-    int size = (b/s);
-    if (b%s) size++;
-    size *= s;
+    int pidSize = (b/s);
+    int size = (b/pSize);
+    if (b%pSize) size++;
+    if (b%s) pidSize++;
+    size *= pSize;
+    pidSize *= s;
     node *best;
     node *curr;
     curr = best = l->head;
@@ -69,7 +74,8 @@ bool BestFit::insert(char pid, int b) {
 	n->pos = best->pos + size;
 	best->next = n;
     }
-    file->write(best->pos, best->size, best->pid);
+    file->write(best->pos, pidSize, best->pid);
+    file->write(best->pos + pidSize, best->size - pidSize, -1);
     return true;
 }
         
@@ -87,33 +93,53 @@ void BestFit::printll() {
     l->print();
 }
         
-void BestFit::compact() {
+void BestFit::compact(int *pageMap) {
+    int *revMap = new int[virt/pSize];
+    for (int i = 0; i < virt/pSize; i++)
+        revMap[i] = i;
     node *curr;
     node *aux;
     curr = l->head;
+    int cont = 0;
     while (curr != NULL) {
-	if (curr->pid != -1) curr = curr->next;
-	else {
-	    if (curr->next != NULL) {
-		if (curr->next->pid == -1) {
-		    aux = curr->next;
-		    curr->size += aux->size;
-		    curr->next = aux->next;
-		    delete aux;
-		} else {
-		    int a;
-		    curr->pid = curr->next->pid;
-		    a = curr->size;
-		    curr->size = curr->next->size;
-		    curr = curr->next;
-		    curr->pid = -1;
-		    curr->size = a;
-		}
-	    } else curr = curr->next;
-	}
+	    if (curr->pid != -1) {
+	        cont += curr->size/pSize;    
+	        curr = curr->next;
+	    }
+	    else {
+	        if (curr->next != NULL) {
+	    	    if (curr->next->pid == -1) {
+	    	        aux = curr->next;
+	    	        curr->size += aux->size;
+	    	        curr->next = aux->next;
+	    	        delete aux;
+	    	    } else {
+	    	        int auxS = (curr->size/pSize) + (curr->next->size/pSize);
+	    	        int *auxMap = new int[auxS];
+	    	        for (int i = 0; i < curr->next->size/pSize; i++)
+	    	            auxMap[i] = pageMap[cont + (curr->size/pSize) + i];
+	    	        for (int i = 0; i < curr->size/pSize; i++)
+	    	            auxMap[i + curr->next->size/pSize] = pageMap[cont + i];
+	    	        for (int i = 0; i <auxS; i++)
+	    	            revMap[cont + i] = auxMap[i];
+	    	        delete[] auxMap;
+	    	        int a;
+	    	        curr->pid = curr->next->pid;
+	      	        a = curr->size;
+	    	        curr->size = curr->next->size;
+	    	        cont += curr->size/pSize;
+	    	        file.write(curr->pos, cur->size, )
+	    	        curr = curr->next;
+	    	        curr->pid = -1;
+	    	        curr->size = a;
+	    	    }
+	       } else curr = curr->next;
+	    }
     }
+    for (int i = 0; i < virt/pSize; i++)
+        pageMap[revMap[i]] = i;
 }
-        
+   
 int BestFit::translate(char pid, int p) {
     node *curr;
     curr = l->head;

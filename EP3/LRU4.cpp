@@ -57,6 +57,13 @@ void LRU4::updateCount() {
     }
 }
 
+void LRU4::compact(int *pageMap) {
+    for (int i = 0; i < pNum; i++)
+        if (list[i].first != -1)
+            list[i].first = pageMap[list[i].first];
+}
+
+
 /*
   int main() {
   char *name = new char[2];

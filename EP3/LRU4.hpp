@@ -19,7 +19,7 @@ class LRU4 {
 private:
     BiFile *fis;
     BiFile *vir;
-    int vSize, pSize, tSize, s, pNum; // >>
+    int vSize, pSize, tSize, s, pNum;
     pair<int, pair <int, unsigned long> > *list;
     unsigned long R;
         
@@ -31,6 +31,8 @@ public:
     void access(int pos);
     
     void updateCount();
+    
+    void compact(int *pageMap);
 };
 
 #endif

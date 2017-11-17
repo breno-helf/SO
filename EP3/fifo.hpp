@@ -25,6 +25,8 @@ public:
     ~Fifo();
     
     void access(int pos);
+    
+    void compact(int *pageMap);
 };
 
 #endif

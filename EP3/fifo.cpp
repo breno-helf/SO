@@ -12,10 +12,10 @@ using namespace std;
 Fifo::Fifo(BiFile &realMem, BiFile &virMem, int total, int virt, int s, int p) {
     fis = &realMem; vir = &virMem;
     tSize = total; vSize = virt; this->s = s; pSize = p;
-    pNum = vSize/pSize;
+    pNum = tSize/pSize;
     queue = new int[pNum];
     for (int i = 0; i < pNum; i++) {
-	queue[i] = -1;
+        queue[i] = -1;
     }
     pointer = 0;
 }
@@ -34,6 +34,15 @@ void Fifo::access(int pos) {
 	pointer = (pointer + 1) %pNum;
 	map.insert(page);
     }
+}
+
+void Fifo::compact(int *pageMap) {
+    for (int i = 0; i < pNum; i++)
+        if (queue[i] != -1) {
+            map.erase(queue[i]);
+            queue[i] = pageMap[queue[i]];
+            map.insert(queue[i]);
+        }
 }
 
 /*

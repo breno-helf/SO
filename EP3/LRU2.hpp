@@ -30,6 +30,8 @@ public:
     ~LRU2();
     
     void access(int pos);
+    
+    void compact(int *pageMap);
 };
 
 #endif

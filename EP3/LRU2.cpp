@@ -64,6 +64,13 @@ void LRU2::access(int pos) {
     vir->copy(fis, page*pSize, pSize, p*pSize);
 }
 
+void LRU2::compact(int *pageMap) {
+    for (int i = 0; i < pNum; i++)
+        if (matrix[i][0] != -1)
+           matrix[i][0] = pageMap[matrix[i][0]];
+}
+
+
 /*
   int main() {
   char *name = new char[2];

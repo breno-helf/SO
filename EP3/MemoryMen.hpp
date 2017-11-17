@@ -10,7 +10,7 @@
 #include "BinFile.hpp"
 using namespace std;
 
-class BestFit {
+class MemoryMen {
 private:
     BiFile *file;
     int total, virt;
@@ -20,19 +20,19 @@ private:
     void mergeWhite();
     
 public:
-    BestFit(BiFile &realMem, int t, int v, int q, int p);        
+    MemoryMen(BiFile &realMem, int t, int v, int q, int p);        
 
-    ~BestFit();
+    ~MemoryMen();
     
-    bool insert(char pid, int b);
+    virtual bool insert(char pid, int b);
     
-    void remove(char pid);
+    virtual void remove(char pid);
     
-    void printll();
+    virtual void printll();
     
-    void compact(int *pageMap);
+    virtual void compact(int *pageMap);
     
-    int translate(char pid, int p);
+    virtual int translate(char pid, int p);
     
 };
 
