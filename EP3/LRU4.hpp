@@ -8,6 +8,7 @@
 #include <fstream>
 #include "LinkedList.hpp"
 #include "BinFile.hpp"
+#include "PageMen.hpp"
 using namespace std;
 
 /*struct page {
@@ -15,11 +16,8 @@ using namespace std;
   int beg;
   };*/
 
-class LRU4 {
+class LRU4 : public PageMen {
 private:
-    BiFile *fis;
-    BiFile *vir;
-    int vSize, pSize, tSize, s, pNum;
     pair<int, pair <int, unsigned long> > *list;
     unsigned long R;
         

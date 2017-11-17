@@ -11,7 +11,7 @@
 #include "MemoryMen.hpp"
 using namespace std;
 
-class BestFit : MemoryMen {
+class BestFit : public MemoryMen {
 public:
     BestFit(BiFile &virMem, int total, int virt, int s, int p);
 

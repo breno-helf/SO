@@ -9,14 +9,13 @@
 #include <set>
 #include "LinkedList.hpp"
 #include "BinFile.hpp"
+#include "PageMen.hpp"
 using namespace std;
 
 
-class Fifo {
+class Fifo : public PageMen {
 private:
-    BiFile *fis;
-    BiFile *vir;
-    int vSize, pSize, tSize, s, pNum, pointer;
+    int pointer;
     int *queue;
     set <int> map;
         
