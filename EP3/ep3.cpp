@@ -79,6 +79,32 @@ trace * load_file(string file_name) {
     return ret;
 }
 
+void simulate(trace * T, int mem_type, int pag_type) {
+    // Cria as classes dos tipos que você quer
+
+
+    for (int cur_time = 0; !(T->action_queue.empty(); cur_time++) {
+	    // Tempo atual eh cur_time 
+	    while(!(T->action_queue.empty()) && T->action_queue.top() == cur_time) {
+		action A = T->action_queue.top();
+		T->action_queue.pop();
+		
+		if (A.type == 1) {
+		    // Acessa a memória na paginação
+		} else if (A.type == 2) {
+		    // Inicializa um processo
+		} else if (A.type == 3) {
+		    // Finaliza um processo
+		} else if (A.type == 4) {
+		    // Compacta
+		} else {
+		    cerr << "Tipo de acao nao valido " << A.type << "\n";
+		    exit(-1);
+		}	
+	    }	    
+	}
+}
+
 int main(int argc, char * argv[]) {
     trace * cur_trace;
     int mem_type = -1;
@@ -89,25 +115,19 @@ int main(int argc, char * argv[]) {
 	if (s == "carrega") {
 	    string file_name;
 	    cin >> file_name;
-	    cur_trace = load_file(file_name);
-
-	    // while (!(cur_trace->action_queue.empty())) {
-	    // 	action A = cur_trace->action_queue.top();
-	    // 	cur_trace->action_queue.pop();
-	    // 	cout << A.type << ' ' << A.t << ' ' << A.process_id << ' ' << A.acess_id << '\n';
-	    // }
-	    
+	    cur_trace = load_file(file_name);	    
 	} else if (s == "espaco") {
-	    // Muda o algortimo de gerenciamento de espaço
+	    // Change de algortihm that manages memory
 	    cin >> mem_type;
 	} else if (s == "substitui") {
-	    // Muda o algortimo de gerenciamento de pagina
+	    // Change de algorithm that manages pages
 	    cin >> pag_type;
 	} else if (s == "executa") {
 	    if (mem_type == -1 || pag_type == -1)
 		cerr << "Voce deve informar o tipo de simulador a ser executado\n";
 	    else {
 		// Executa o algoritimo
+		simulate(cur_trace, mem_type, pag_type);
 	    }
 	} else {
 	    break;
