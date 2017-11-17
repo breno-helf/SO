@@ -13,6 +13,7 @@ struct node {
     int size;
     int pos;
     node *next;
+    int IDsize;
 };
 
 class LinkedList {

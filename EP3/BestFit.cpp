@@ -115,9 +115,11 @@ void BestFit::compact(int *pageMap) {
 	      	        a = curr->size;
 	    	        curr->size = curr->next->size;
 	    	        cont += curr->size/pSize;
-	    	        file->write(best->pos, best->IDsize, best->pid);
-                    file->write(best->pos + best->IDsize, best->size - best->IDsize, -1);
+	    	        file->write(curr->pos, curr->IDsize, curr->pid);
+			file->write(curr->pos + curr->IDsize, curr->size - curr->IDsize, -1);
 	    	        curr = curr->next;
+	    	        file->write(curr->pos, curr->IDsize, curr->pid);
+			file->write(curr->pos + curr->IDsize, curr->size - curr->IDsize, -1);
 	    	        curr->pid = -1;
 	    	        curr->size = a;
 	    	    }

@@ -11,15 +11,14 @@
 #include "BinFile.hpp"
 using namespace std;
 
-
-class Fifo {
-private:
+class PageMen {
+protected:
     BiFile *fis;
     BiFile *vir;
     int vSize, pSize, tSize, s, pNum;
         
 public:
-    PageMen(BiFile &realMem, BiFile &virMem, int total, int virt, int s, int p);        
+    PageMen();        
     ~PageMen();
     
     virtual void access(int pos);

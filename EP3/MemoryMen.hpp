@@ -20,7 +20,7 @@ protected:
     void mergeWhite();
     
 public:
-    MemoryMen(BiFile &realMem, int t, int v, int q, int p);        
+    MemoryMen();
 
     ~MemoryMen();
     

@@ -13,7 +13,7 @@ using namespace std;
 
 class BestFit : MemoryMen {
 public:
-    BestFit(BiFile &realMem, int t, int v, int q, int p);        
+    BestFit(BiFile &virMem, int total, int virt, int s, int p);
 
     ~BestFit();
     
