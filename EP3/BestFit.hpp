@@ -8,17 +8,10 @@
 #include <fstream>
 #include "LinkedList.hpp"
 #include "BinFile.hpp"
+#include "MemoryMen.hpp"
 using namespace std;
 
-class BestFit {
-private:
-    BiFile *file;
-    int total, virt;
-    int s, pSize;
-    LinkedList *l;
-    
-    void mergeWhite();
-    
+class BestFit : MemoryMen {
 public:
     BestFit(BiFile &realMem, int t, int v, int q, int p);        
 

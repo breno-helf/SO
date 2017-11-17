@@ -4,23 +4,7 @@
 #include "BestFit.hpp"
 using namespace std;
 
-
-void BestFit::mergeWhite() {
-    node *curr;
-    curr = l->head;
-    while (curr->next != NULL) {
-	if (curr->pid == -1 && curr->next->pid == -1) {
-	    node *t;
-	    t = curr->next;
-	    curr->size += curr->next->size;
-	    curr->next = curr->next->next;
-	    delete[] t;
-	}
-	else curr = curr->next;
-    }
-}
-    
-    
+        
 BestFit::BestFit(BiFile &virMem, int total, int virt, int s, int p) {
     file = &virMem;
     this->total = total;
@@ -31,7 +15,7 @@ BestFit::BestFit(BiFile &virMem, int total, int virt, int s, int p) {
     l->head = new node;
     l->head->pid = -1;
     l->head->pos = 0;
-    l->head->size = t;
+    l->head->size = total;
     l->head->next = NULL;
 }
         
@@ -128,7 +112,7 @@ void BestFit::compact(int *pageMap) {
 	      	        a = curr->size;
 	    	        curr->size = curr->next->size;
 	    	        cont += curr->size/pSize;
-	    	        file.write(curr->pos, cur->size, )
+	    	        file.write(curr->pos, curr->size, )
 	    	        curr = curr->next;
 	    	        curr->pid = -1;
 	    	        curr->size = a;

@@ -11,7 +11,7 @@
 using namespace std;
 
 class MemoryMen {
-private:
+protected:
     BiFile *file;
     int total, virt;
     int s, pSize;
