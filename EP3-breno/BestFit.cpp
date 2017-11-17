@@ -11,6 +11,10 @@ struct node {
 
 class LinkedList {
     private:
+        void *destroy(node *n) {
+            if (n->next != NULL) destroy(n->next);
+            delete[] n;
+        }
         
     public:
         node *head;
@@ -28,6 +32,10 @@ class LinkedList {
                 cout << " pos = " << curr->pos << "\n";
                 curr = curr->next;
             }
+        }
+        
+        ~LinkedList() {
+            destroy(head);
         }
 };
 
@@ -47,6 +55,11 @@ class BiFile {
                 file.write(aux, 1);
         }
         
+        ~BiFile() {
+            delete[] aux;
+            delete file;
+        }
+        
         void write(int pos, int s, char c) {
             file.seekp(pos);
             aux[0] = c;
@@ -57,11 +70,6 @@ class BiFile {
         void read(int pos, int s, char *ret) {
             file.seekg(pos);
             file.read(ret, s);
-        }
-        
-        void close() {
-            delete[] aux;
-            file.close();
         }
     
         void copy(BiFile *origin, int pos, int s, int dest) {
@@ -75,6 +83,9 @@ class BiFile {
             char *buff = new char[size];
             this->read(0, size, buff);
             for (int i = 0; i < size; i++) {
+                if (buff[i] < 0) cout << " ";
+                else if (buff[i] < 10) cout << "  ";
+                else if (buff[i] < 100) cout << " ";
                 cout << (short) buff[i] << " ";
             }
             cout << "\n";
@@ -97,7 +108,7 @@ class BestFit {
                     t = curr->next;
                     curr->size += curr->next->size;
                     curr->next = curr->next->next;
-                    delete t;
+                    delete[] t;
                 }
                 else curr = curr->next;
             }
@@ -115,6 +126,10 @@ class BestFit {
             l->head->pos = 0;
             l->head->size = t;
             l->head->next = NULL;
+        }
+        
+        ~BestFit() {
+            delete[] l;
         }
         
         bool insert(char pid, int b) {
@@ -166,6 +181,42 @@ class BestFit {
         void printll() {
             l->print();
         }
+        
+        void compact() {
+            node *curr;
+            node *aux;
+            curr = l->head;
+            while (curr != NULL) {
+                if (curr->pid != -1) curr = curr->next;
+                else {
+                    if (curr->next != NULL) {
+                        if (curr->next->pid == -1) {
+                            aux = curr->next;
+                            curr->size += aux->size;
+                            curr->next = aux->next;
+                            delete aux;
+                        } else {
+                            int a;
+                            curr->pid = curr->next->pid;
+                            a = curr->size;
+                            curr->size = curr->next->size;
+                            curr = curr->next;
+                            curr->pid = -1;
+                            curr->size = a;
+                        }
+                    } else curr = curr->next;
+                }
+            }
+        }
+        
+        int translate(char pid, int p) {
+            node *curr;
+            curr = l->head;
+            while (curr->pid != pid)
+                curr = curr->next;
+            return (curr->pos + p);
+        }
+        
 };
 
 int main() {
@@ -176,12 +227,15 @@ int main() {
     bf.insert(1, 2);
     bf.insert(2, 2);
     bf.insert(3, 3);
-    file.print();
-    bf.printll();
+    //file.print();
     bf.remove(2);
-    bf.remove(1);
-    bf.insert(4, 2);
-    file.print();
+    //bf.remove(1);
     bf.printll();
+    bf.compact();
+    cout << "---#---\n";
+    bf.printll();
+    bf.insert(4, 2);
+    //file.print();
+    //bf.printll();
     return 0;
 }

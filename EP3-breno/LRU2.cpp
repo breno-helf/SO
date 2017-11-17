@@ -82,6 +82,9 @@ class BiFile {
             char *buff = new char[size];
             this->read(0, size, buff);
             for (int i = 0; i < size; i++) {
+                if (buff[i] < 0) cout << " ";
+                else if (buff[i] < 10) cout << "  ";
+                else if (buff[i] < 100) cout << " ";
                 cout << (short) buff[i] << " ";
             }
             cout << "\n";
@@ -175,41 +178,66 @@ class BestFit {
         }
 };
 
-class Fifo {
+class LRU2 {
     private:
         BiFile *fis;
         BiFile *vir;
-        int vSize, pSize, tSize, s, pNum, pointer;
-        int *queue;
-        unordered_set <int> map;
+        int vSize, pSize, tSize, s, pNum;
+        int **matrix;
+        
+        int CompVal(int row1, int row2) {
+            for (int i = 1; i <= pNum; i++) {
+                if (matrix[row1][i] > matrix[row2][i]) return 1;
+                if (matrix[row1][i] > matrix[row2][i]) return -1;
+            }
+            return 0;
+        }
         
     public:
-        Fifo(BiFile &realMem, BiFile &virMem, int total, int virt, int s, int p) {
+        LRU2(BiFile &realMem, BiFile &virMem, int total, int virt, int s, int p) {
             fis = &realMem; vir = &virMem;
             tSize = total; vSize = virt; this->s = s; pSize = p;
             pNum = vSize/pSize;
-            queue = new int[pNum];
-            for (int i = 0; i < pNum; i++) {
-                queue[i] = -1;
-            }
-            pointer = 0;
+            matrix = new int*[pNum];
+            for (int i = 0; i < pNum; i++)
+                matrix[i] = new int[pNum + 1];
+            for (int i = 0; i < pNum; i++)
+                for (int j = 0; j <= pNum; j++) {
+                    if (j == 0) matrix[i][j] = -1;
+                    else matrix[i][j] = 0;
+                }
         }
         
-        ~Fifo() {
-            delete queue;
-            delete map;
+        ~LRU2() {
+            for (int i = 0; i < pNum; i++)
+                delete[] matrix[i];
+            delete[] matrix;
         }
         
         void access(int pos) {
             int page = pos/pSize;
-            if (map.find(page) == map.end()) {
-                if (queue[pointer] != -1)
-                    map.erase(queue[pointer]);
-                queue[pointer] = page;
-                vir->copy(fis, page*pSize, pSize, pointer*pSize);
-                pointer = (pointer + 1) %pNum;
-                map.insert(page);
+            int p = 0;
+            for (int i = 0; i < pNum; i++) {
+                if (matrix[i][0] == page) {
+                    for (int j = 0; j < pNum; j++) {
+                        matrix[j][i] = 0;
+                        matrix[i][j + 1] = 1;
+                    }
+                    return;
+                }
+                else if (matrix[i][0] == -1) p = i;
+                else {
+                    if (matrix[p][0] != -1) {
+                        if (CompVal(p, i) == 1) p = i;
+                    }
+                }
             }
+            matrix[p][0] = page;
+            for (int j = 0; j < pNum; j++) {
+                matrix[j][p] = 0;
+                matrix[p][j + 1] = 1;
+            }
+            vir->copy(fis, page*pSize, pSize, p*pSize);
         }
 };
 
@@ -220,20 +248,20 @@ int main() {
     name[1] = '2';
     BiFile real(64, name);
     BestFit bf(real, 64, 2);
-    Fifo f(real, vir, 64, 16, 2, 4);
+    LRU2 f(real, vir, 64, 16, 2, 4);
     vir.print();
     bf.insert(1, 10);
     bf.insert(2, 10);
-    bf.insert(3, 10);
+    bf.insert(48, 10);
     bf.insert(4, 10);
-    bf.insert(5, 10);
+    bf.insert(107, 10);
     bf.insert(6, 10);
     f.access(0);
-    f.access(4);
     f.access(8);
-    f.access(12);
     f.access(16);
-    f.access(20);
+    f.access(24);
+    f.access(32);
+    f.access(40);
     vir.print();
     return 0;
 }
