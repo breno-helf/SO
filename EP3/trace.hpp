@@ -1,9 +1,10 @@
+// Breno Helfstein Moura          NUSP: 9790972
+// Lucas Daher                    NUSP: 8991769
+
 #include <iostream>
-#include <vector>
-#include <string>
 #include <queue>
-#include <cstdio>
-#include <cstdlib>
+#include <vector>
+#include <fstream>
 using namespace std;
 
 /* trace.hpp
@@ -52,15 +53,15 @@ struct process {
 
 /*
   Types:
-     1 - Memory Acess 
-     2 - Process Initialization
-     3 - Process Finalization
-     4 - Compact
+  1 - Memory Acess 
+  2 - Process Initialization
+  3 - Process Finalization
+  4 - Compact
      
-     process_id is the position of the process in the trace vector
-     acess_id is the position of the acess in the mem_acess vector (in the proces)
-     when is compact both are -1
-     when is process initialization / finalition acess_id is -1.
+  process_id is the position of the process in the trace vector
+  acess_id is the position of the acess in the mem_acess vector (in the proces)
+  when is compact both are -1
+  when is process initialization / finalition acess_id is -1.
 */
 struct action {
     int type;

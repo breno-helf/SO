@@ -6,8 +6,8 @@
 
 #include <iostream>
 #include <fstream>
+#include "LinkedList.hpp"
 #include "BinFile.hpp"
-
 using namespace std;
 
 class BestFit {
@@ -17,16 +17,23 @@ private:
     int s;
     LinkedList *l;
     
-    void mergeWhite();
-        
+    void mergeWhite();    
+    
 public:
-    BestFit(BiFile &realMem, int t, int q);
-        
+    BestFit(BiFile &realMem, int t, int q);        
+
+    ~BestFit();
+    
     bool insert(char pid, int b);
-        
+    
     void remove(char pid);
-        
+    
     void printll();
+    
+    void compact();
+    
+    int translate(char pid, int p);
+    
 };
 
 #endif

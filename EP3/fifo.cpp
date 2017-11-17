@@ -4,6 +4,11 @@
 #include "fifo.hpp"
 using namespace std;
 
+/*struct page {
+  char pid;
+  int beg;
+  };*/
+
 Fifo::Fifo(BiFile &realMem, BiFile &virMem, int total, int virt, int s, int p) {
     fis = &realMem; vir = &virMem;
     tSize = total; vSize = virt; this->s = s; pSize = p;
@@ -13,6 +18,10 @@ Fifo::Fifo(BiFile &realMem, BiFile &virMem, int total, int virt, int s, int p) {
 	queue[i] = -1;
     }
     pointer = 0;
+}
+        
+Fifo::~Fifo() {
+    delete queue;
 }
         
 void Fifo::access(int pos) {
@@ -51,4 +60,5 @@ void Fifo::access(int pos) {
   f.access(20);
   vir.print();
   return 0;
-  }*/
+  }
+*/

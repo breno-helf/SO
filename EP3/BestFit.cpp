@@ -4,6 +4,7 @@
 #include "BestFit.hpp"
 using namespace std;
 
+    
 void BestFit::mergeWhite() {
     node *curr;
     curr = l->head;
@@ -13,7 +14,7 @@ void BestFit::mergeWhite() {
 	    t = curr->next;
 	    curr->size += curr->next->size;
 	    curr->next = curr->next->next;
-	    delete t;
+	    delete[] t;
 	}
 	else curr = curr->next;
     }
@@ -30,6 +31,10 @@ BestFit::BestFit(BiFile &realMem, int t, int q) {
     l->head->pos = 0;
     l->head->size = t;
     l->head->next = NULL;
+}
+        
+BestFit::~BestFit() {
+    delete[] l;
 }
         
 bool BestFit::insert(char pid, int b) {
@@ -81,6 +86,42 @@ void BestFit::remove(char pid) {
 void BestFit::printll() {
     l->print();
 }
+        
+void BestFit::compact() {
+    node *curr;
+    node *aux;
+    curr = l->head;
+    while (curr != NULL) {
+	if (curr->pid != -1) curr = curr->next;
+	else {
+	    if (curr->next != NULL) {
+		if (curr->next->pid == -1) {
+		    aux = curr->next;
+		    curr->size += aux->size;
+		    curr->next = aux->next;
+		    delete aux;
+		} else {
+		    int a;
+		    curr->pid = curr->next->pid;
+		    a = curr->size;
+		    curr->size = curr->next->size;
+		    curr = curr->next;
+		    curr->pid = -1;
+		    curr->size = a;
+		}
+	    } else curr = curr->next;
+	}
+    }
+}
+        
+int BestFit::translate(char pid, int p) {
+    node *curr;
+    curr = l->head;
+    while (curr->pid != pid)
+	curr = curr->next;
+    return (curr->pos + p);
+}
+        
 
 /*
   int main() {
@@ -91,12 +132,16 @@ void BestFit::printll() {
   bf.insert(1, 2);
   bf.insert(2, 2);
   bf.insert(3, 3);
-  file.print();
-  bf.printll();
+  //file.print();
   bf.remove(2);
-  bf.remove(1);
-  bf.insert(4, 2);
-  file.print();
+  //bf.remove(1);
   bf.printll();
+  bf.compact();
+  cout << "---#---\n";
+  bf.printll();
+  bf.insert(4, 2);
+  //file.print();
+  //bf.printll();
   return 0;
-  }*/
+  }
+*/

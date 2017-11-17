@@ -1,13 +1,14 @@
+// Breno Helfstein Moura          NUSP: 9790972
+// Lucas Daher                    NUSP: 8991769
+
 #include <iostream>
-#include <vector>
-#include <string>
 #include <queue>
+#include <vector>
+#include <fstream>
 #include <cstdio>
 #include <cstdlib>
 #include <assert.h>
 #include "trace.hpp"
-#include "BestFit.hpp"
-#include "fifo.hpp"
 using namespace std;
 
 vector<string> stringToVec(string s) {
