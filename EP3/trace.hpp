@@ -15,8 +15,8 @@ using namespace std;
 // Stores a memory acess
 struct acess {
     int pos;
-    double t;
-    acess(int POS = 0, double T = 0.0):
+    int t;
+    acess(int POS = 0, int T = 0.0):
 	pos(POS), t(T) {}    
 
     bool operator < (const acess ot) const {
@@ -30,12 +30,12 @@ struct acess {
 
 // Store a process
 struct process {
-    double t0, tf;
+    int t0, tf;
     int b;
     string name;
     vector<acess> mem_acess;
 
-    process(double T0 = 0.0, double TF = 0.0, int B = 0, string NAME = "") {
+    process(int T0 = 0.0, int TF = 0.0, int B = 0, string NAME = "") {
 	t0 = T0;
 	tf = TF;
 	b  = B;
@@ -65,10 +65,10 @@ struct process {
 */
 struct action {
     int type;
-    double t;
+    int t;
     int process_id;
     int acess_id;
-    action(int TYPE = 0, double T = 0.0, int PID = -1, int AID = -1) {
+    action(int TYPE = 0, int T = 0.0, int PID = -1, int AID = -1) {
 	type = TYPE;
 	t = T;
 	process_id = PID;

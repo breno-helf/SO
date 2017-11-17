@@ -79,39 +79,88 @@ trace * load_file(string file_name) {
     return ret;
 }
 
+void simulate(trace * T, int mem_type, int pag_type, int start_time, int end_time) {
+    // Cria as classes dos tipos que você quer
+
+    for (int cur_time = 0; !(T->action_queue.empty()); cur_time++) {
+	// Tempo atual eh cur_time
+
+	if (cur_time == start_time) {
+	    // ativa a funcao de printar estado
+	} 
+	
+	while((!(T->action_queue.empty())) && (T->action_queue.top()).t == cur_time) {
+	    action A = T->action_queue.top();
+	    T->action_queue.pop();
+		
+	    if (A.type == 1) {
+		// Acessa a memória na paginação
+	    } else if (A.type == 2) {
+		// Inicializa um processo
+	    } else if (A.type == 3) {
+		// Finaliza um processo
+	    } else if (A.type == 4) {
+		// Compacta
+	    } else {
+		cerr << "Tipo de acao nao valido " << A.type << endl;
+		exit(-1);
+	    }	
+	}
+	
+	if (cur_time == end_time) {
+	    // desativa a funcao de printar estado
+	}
+    }   
+}
+
 int main(int argc, char * argv[]) {
     trace * cur_trace;
     int mem_type = -1;
     int pag_type = -1;
+    cout << "Para interagir com o prompt voce deve usar os comandos: " << endl;
+    cout << "    carrega <arquivo>\n    espaco <num>\n    substitui <num>\n    executa <intervalo>\n    sai" << endl;
+    cout << "Todos especificados no enunciado do EP3" << endl;
+    cout << "Esperando comandos: " << endl;
+    
+
     while (true) {
 	string s;
+	cout << "Comando: ";
+	fflush(stdout);
 	cin >> s;
 	if (s == "carrega") {
 	    string file_name;
 	    cin >> file_name;
 	    cur_trace = load_file(file_name);
-
-	    // while (!(cur_trace->action_queue.empty())) {
-	    // 	action A = cur_trace->action_queue.top();
-	    // 	cur_trace->action_queue.pop();
-	    // 	cout << A.type << ' ' << A.t << ' ' << A.process_id << ' ' << A.acess_id << '\n';
-	    // }
-	    
+	    cout << "Arquivo " << file_name << " carregado" << endl;
 	} else if (s == "espaco") {
-	    // Muda o algortimo de gerenciamento de espaço
+	    // Change de algortihm that manages memory
 	    cin >> mem_type;
-	} else if (s == "substitui") {
-	    // Muda o algortimo de gerenciamento de pagina
-	    cin >> pag_type;
-	} else if (s == "executa") {
-	    if (mem_type == -1 || pag_type == -1)
-		cerr << "Voce deve informar o tipo de simulador a ser executado\n";
-	    else {
-		// Executa o algoritimo
+	    if (mem_type < 1 || mem_type > 3) {
+		cout << "O tipo informado nao eh valido" << endl;
 	    }
-	} else {
+	    else cout << "Algortimo de gerenciamento de memoria " << mem_type << " escolhido" << endl;
+	} else if (s == "substitui") {
+	    // Change de algorithm that manages pages
+	    cin >> pag_type;
+	    if (pag_type < 1 || pag_type > 4) {
+		cout << "O tipo informado nao eh valido" << endl;
+	    }
+	    else cout << "Algortimo de substituicao de pagina " << pag_type << " escolhido" << endl;
+	} else if (s == "executa") {
+	    int start_time, end_time;
+	    cin >> start_time >> end_time;
+	    if (mem_type == -1 || pag_type == -1)
+		cerr << "Voce deve informar o tipo de simulador a ser executado" << endl;
+	    else {
+		// Executes the algorithm printing the states from start_time to end_time
+		cout << "Simulando, imprimindo na stderr de " << start_time << " ate " << end_time << endl;
+		simulate(cur_trace, mem_type, pag_type, start_time, end_time);
+	    }
+	} else if (s == "sai") {
 	    break;
+	} else {	    
+	    cerr << "Comando nao suportado" << endl;
 	}
-	fflush(stdout);
     }
 }
