@@ -16,6 +16,7 @@ BestFit::BestFit(BiFile &virMem, int total, int virt, int s, int p) {
     l->head->pid = -1;
     l->head->pos = 0;
     l->head->size = total;
+    l->head->IDsize = 0;
     l->head->next = NULL;
 }
         
@@ -50,16 +51,18 @@ bool BestFit::insert(char pid, int b) {
     int dif = best->size - size;
     best->pid = pid;
     best->size = size;
+    best->IDsize = pidSize;
     if (dif > 0) {
 	node *n = new node;
 	n->pid = -1;
 	n->size = dif;
+	n->IDsize = 0;
 	n->next = best->next;
 	n->pos = best->pos + size;
 	best->next = n;
     }
-    file->write(best->pos, pidSize, best->pid);
-    file->write(best->pos + pidSize, best->size - pidSize, -1);
+    file->write(best->pos, best->IDsize, best->pid);
+    file->write(best->pos + best->IDsize, best->size - best->IDsize, -1);
     return true;
 }
         
@@ -112,7 +115,8 @@ void BestFit::compact(int *pageMap) {
 	      	        a = curr->size;
 	    	        curr->size = curr->next->size;
 	    	        cont += curr->size/pSize;
-	    	        file.write(curr->pos, curr->size, )
+	    	        file->write(best->pos, best->IDsize, best->pid);
+                    file->write(best->pos + best->IDsize, best->size - best->IDsize, -1);
 	    	        curr = curr->next;
 	    	        curr->pid = -1;
 	    	        curr->size = a;
