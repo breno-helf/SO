@@ -1,8 +1,8 @@
 // Breno Helfstein Moura          NUSP: 9790972
 // Lucas Daher                    NUSP: 8991769
 
-#ifndef BEST_FIT_H
-#define BEST_FIT_H
+#ifndef MEMORY_MEN_H
+#define MEMORY_MEN_H
 
 #include <iostream>
 #include <fstream>
