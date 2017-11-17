@@ -1,3 +1,6 @@
+// Breno Helfstein Moura          NUSP: 9790972
+// Lucas Daher                    NUSP: 8991769
+
 #include "LinkedList.hpp"
 using namespace std;
 

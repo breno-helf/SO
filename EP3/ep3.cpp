@@ -110,9 +110,7 @@ void simulate(trace * T, int mem_type, int pag_type, int start_time, int end_tim
 	if (cur_time == end_time) {
 	    // desativa a funcao de printar estado
 	}
-    }
-
-    
+    }   
 }
 
 int main(int argc, char * argv[]) {
@@ -127,6 +125,7 @@ int main(int argc, char * argv[]) {
 
     while (true) {
 	string s;
+	cout << "Comando: ";
 	fflush(stdout);
 	cin >> s;
 	if (s == "carrega") {
