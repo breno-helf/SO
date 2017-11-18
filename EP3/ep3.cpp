@@ -97,8 +97,8 @@ void simulate(trace * T, int mem_type, int pag_type, int print_time) {
     char * virt_dir = (char *) malloc(sizeof(char) * 10);
     char * real_dir = (char *) malloc(sizeof(char) * 10);
     
-    strcpy(virt_dir, "/tmp/ep3.vir");
-    strcpy(real_dir, "/tmp/ep3.mem");
+    strcpy(virt_dir, "ep3.vir");
+    strcpy(real_dir, "ep3.mem");
 
 
     MemoryMen * M;
@@ -129,40 +129,48 @@ void simulate(trace * T, int mem_type, int pag_type, int print_time) {
     for (int cur_time = 0; !(T->action_queue.empty()); cur_time++) {
     // Tempo atual eh cur_time
 
-    if ((cur_time%print_time) == 0) {
-        //printa estado
-    } 
+        if ((cur_time%print_time) == 0) {
+            //printa estado
+        } 
     
-    while((!(T->action_queue.empty())) && (T->action_queue.top()).t == cur_time) {
-        action A = T->action_queue.top();
-        T->action_queue.pop();
-
-        cerr << "ACAO type: " << A.type << " t: " << A.t << " PID: " << A.process_id << " AID: " << A.acess_id << endl;
-
+        while((!(T->action_queue.empty())) && (T->action_queue.top()).t == cur_time) {
+            action A = T->action_queue.top();
+            T->action_queue.pop();
+    
+            cerr << "ACAO type: " << A.type << " t: " << A.t << " PID: " << A.process_id << " AID: " << A.acess_id << endl;
+    
         
-        if (A.type == 1) {
-        // Acessa a memória na paginação
-            process cur_process = T->process_vec[A.process_id];
-            acess cur_acess = cur_process.mem_acess[A.acess_id];
-            P->access(cur_acess.pos);       
-        } else if (A.type == 2) {
-        // Inicializa um processo
-            process cur_process = T->process_vec[A.process_id];
-            M->insert(A.process_id, cur_process.b);
-        } else if (A.type == 3) {
-        // Finaliza um processo
-            P->remove(M->translate(A.process_id, 0), M->translate(A.process_id, M->size(A.process_id) - 1));
-            M->remove(A.process_id);
-        } else if (A.type == 4) {
-        // Compacta
-            M->compact(pageMap);
-            P->compact(pageMap);
-        } else {
-            cerr << "Tipo de acao nao valido " << A.type << endl;
-            exit(-1);
-        }   
+            if (A.type == 1) {
+                // Acessa a memória na paginação
+                process cur_process = T->process_vec[A.process_id];
+                acess cur_acess = cur_process.mem_acess[A.acess_id];
+                P->access(cur_acess.pos);       
+            } else if (A.type == 2) {
+                // Inicializa um processo
+                process cur_process = T->process_vec[A.process_id];
+                if (!M->insert(A.process_id, cur_process.b)) {
+                    M->compact(pageMap);
+                    P->compact(pageMap);
+                    if (!M->insert(A.process_id, cur_process.b)) {
+                        cerr << "nao ha memoria suficiente para simular\n";
+                        return;
+                    }
+                }
+            } else if (A.type == 3) {
+                // Finaliza um processo
+                P->remove(M->translate(A.process_id, 0), M->translate(A.process_id, M->size(A.process_id) - 1));
+                M->remove(A.process_id);
+            } else if (A.type == 4) {
+                // Compacta
+                M->compact(pageMap);
+                P->compact(pageMap);
+            } else {
+                cerr << "Tipo de acao nao valido " << A.type << endl;
+                exit(-1);
+            }   
+        }
     }
-    }   
+    M->printll();
 }
 
 int main(int argc, char * argv[]) {
@@ -174,7 +182,7 @@ int main(int argc, char * argv[]) {
     
     cur_trace = load_file("trace-file.txt");
     simulate(cur_trace, 1, 2, 3);
-    
+    return 0;
     
     cout << "Para interagir com o prompt voce deve usar os comandos: " << endl;
     cout << "    carrega <arquivo>\n    espaco <num>\n    substitui <num>\n    executa <intervalo>\n    sai" << endl;
