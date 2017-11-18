@@ -85,7 +85,7 @@ struct action {
 
     bool operator > (const action ot) const {
 	if (t == ot.t) {
-	    return type < ot.type;
+	    return type > ot.type;
 	}
 
 	return t > ot.t;

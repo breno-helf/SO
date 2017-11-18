@@ -132,9 +132,12 @@ void simulate(trace * T, int mem_type, int pag_type, int print_time) {
 	while((!(T->action_queue.empty())) && (T->action_queue.top()).t == cur_time) {
 	    action A = T->action_queue.top();
 	    T->action_queue.pop();
-
-	    cerr << "ACAO type: " << A.type << " t: " << A.t << " PID: " << A.process_id << " AID: " << A.acess_id << endl;
-
+	    
+	    int PID = A.process_id;
+	    
+	    cerr << "ACAO type: " << A.type << " t: " << A.t << " PID: " << A.process_id << " AID: " << A.acess_id;
+	    if (PID != -1) cerr << " -- Nome: " << T->process_vec[PID].name;
+	    cerr << endl;
         
 	    if (A.type == 1) {
 		// Inicializa um processo
