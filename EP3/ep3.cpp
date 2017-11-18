@@ -60,9 +60,8 @@ trace * load_file(string file_name) {
 	if ((int)objs.size() == 2) {
 	    if (objs[1] == "COMPACTAR") {
 		action A = action(4, atoi(objs[0].c_str()), -1, -1);
-		ret->action_queue.push(A);
-	    }
-        
+		ret->action_vec.push_back(A);
+	    }        
 	} else {
 	    process p;
 	    int PID = ret->process_vec.size();
@@ -78,12 +77,12 @@ trace * load_file(string file_name) {
 		int AID = p.mem_acess.size();
         
 		A = acess(atoi(objs[i].c_str()), atoi(objs[i + 1].c_str()));
-		ret->action_queue.push(action(2, A.t, PID, AID)); 
+		ret->action_vec.push_back(action(2, A.t, PID, AID)); 
 		p.mem_acess.push_back(A);
 	    }
 	    ret->process_vec.push_back(p);
-	    ret->action_queue.push(initialize);
-	    ret->action_queue.push(finalize);
+	    ret->action_vec.push_back(initialize);
+	    ret->action_vec.push_back(finalize);
 	}   
     }
     trace_file.close();
@@ -91,8 +90,17 @@ trace * load_file(string file_name) {
     return ret;
 }
 
+void start_queue(trace * T) {
+    int tam = T->action_vec.size();
+    for (int i = 0; i < tam; i++) {
+	T->action_queue.push(T->action_vec[i]);
+    }
+}
+
 void simulate(trace * T, int mem_type, int pag_type, int print_time) {
     // Cria as classes dos tipos que você quer
+    
+    start_queue(T);
     
     string virt_dir = "/tmp/ep3.vir";
     string real_dir = "/tmp/ep3.mem";
@@ -196,26 +204,28 @@ int main(int argc, char * argv[]) {
         getline(cin, s);
         vs = stringToVec(s);
         s = vs[0];
-        if (s == "carrega") {
+	bool ok = ((int)vs.size() == 2);
+	
+        if (s == "carrega" && ok) {
             string file_name;
             file_name = vs[1];
             cur_trace = load_file(file_name);
             cout << "Arquivo " << file_name << " carregado" << endl;
-        } else if (s == "espaco") {
+        } else if (s == "espaco" && ok) {
             // Change de algortihm that manages memory
             mem_type = atoi(vs[1].c_str());
             if (mem_type < 1 || mem_type > 3) {
                 cout << "O tipo informado nao eh valido" << endl;
             }
             else cout << "Algortimo de gerenciamento de memoria " << mem_type << " escolhido" << endl;
-        } else if (s == "substitui") {
+        } else if (s == "substitui" && ok) {
             // Change de algorithm that manages pages
             pag_type = atoi(vs[1].c_str());
             if (pag_type < 1 || pag_type > 4) {
                 cout << "O tipo informado nao eh valido" << endl;
             }
             else cout << "Algortimo de substituicao de pagina " << pag_type << " escolhido" << endl;
-        } else if (s == "executa") {
+        } else if (s == "executa" && ok) {
             int print_time;
             print_time = atoi(vs[1].c_str());
             if (mem_type == -1 || pag_type == -1)
@@ -224,6 +234,7 @@ int main(int argc, char * argv[]) {
                 // Executes the algorithm printing the states from start_time to end_time
                 cout << "Simulando, imprimindo na stderr de " << print_time << " em " << print_time << endl;
                 simulate(cur_trace, mem_type, pag_type, print_time);
+		//cout << "Arquivo de trace simulado, para executar outro arquvio você deve carregar o trace novamente" << endl;
             }
         } else if (s == "sai") {
             break;

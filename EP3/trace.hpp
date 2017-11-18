@@ -96,5 +96,7 @@ struct action {
 struct trace {
     int total, virt, s, p;
     vector<process> process_vec;
-    priority_queue<action, vector<action>, greater<action> > action_queue;    
+    vector<action> action_vec;
+    priority_queue<action, vector<action>, greater<action> > action_queue;
+    
 };

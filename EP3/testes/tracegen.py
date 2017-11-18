@@ -1,17 +1,18 @@
 from random import randint
 from random import shuffle
+from random import choice
 
 END_TIME = 300
 START_TIME = 0
 
 total = 60
 virtual = 120
-s = 8
-p = 4
+s = 4
+p = 2
 print(str(total) + " " + str(virtual) + " " + str(s) + " " + str(p))
 
-process_num = 3
-compact_num = randint(1, 3)
+process_num = 10
+compact_num = randint(1, 4)
 
 v = []
 
@@ -22,7 +23,7 @@ for i in range(compact_num):
 for i in range(process_num):
     t0 = randint(START_TIME, END_TIME)
     tf = randint(t0, END_TIME)
-    b  = randint(1, 30)
+    b  = choice([2, 4, 6, 8])
     nome = "Processo" + str(i)
     acessos = randint(1, 10)
     s = (str(t0) + " " + str(tf) + " " + str(b) + " " + nome)
