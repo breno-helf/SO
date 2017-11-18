@@ -12,6 +12,9 @@ BiFile::BiFile(int s, const char *st) {
     file.close();
     
     file.open(st, std::fstream::in | std::fstream::out | std::fstream::binary);
+
+    assert(file.is_open());
+    
     aux = new char[1];
     aux[0] = -1;
     for (int j = 0; j < s; j++)
