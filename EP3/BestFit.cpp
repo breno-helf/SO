@@ -69,7 +69,7 @@ bool BestFit::insert(char pid, int b) {
 void BestFit::remove(char pid) {
     node *curr;
     curr = l->head;
-    while (curr->pid != pid)
+    while (curr->pid != pid) // <-- Atualmente esta linha da segfault 
 	curr = curr->next;
     curr->pid = -1;
     file->write(curr->pos, curr->size, curr->pid);
