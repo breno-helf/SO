@@ -94,17 +94,13 @@ trace * load_file(string file_name) {
 void simulate(trace * T, int mem_type, int pag_type, int print_time) {
     // Cria as classes dos tipos que você quer
     
-    char * virt_dir = (char *) malloc(sizeof(char) * 10);
-    char * real_dir = (char *) malloc(sizeof(char) * 10);
+    string virt_dir = "/tmp/ep3.vir";
+    string real_dir = "/tmp/ep3.mem";
     
-    strcpy(virt_dir, "/tmp/ep3.vir");
-    strcpy(real_dir, "/tmp/ep3.mem");
-
-
     MemoryMen * M;
-    BiFile * VirtualMem = new BiFile(T->virt, virt_dir);
+    BiFile * VirtualMem = new BiFile(T->virt, virt_dir.c_str());
     PageMen * P;
-    BiFile * RealMem = new BiFile(T->total, real_dir);
+    BiFile * RealMem = new BiFile(T->total, real_dir.c_str());
     int *pageMap = new int[T->virt/T->p];
 
     if (mem_type == 1) {
