@@ -83,6 +83,7 @@ void LRU2::print() {
 }
 
 void LRU2::remove(int begPos, int endPos) {
+    if (begPos == -1 || endPos == -1) return;
     int begPage = begPos/pSize, endPage = endPos/pSize;
     for (int i = 0; i < pNum; i++)
         if (matrix[i][0] >= begPage && matrix[i][0] <= endPage) {
