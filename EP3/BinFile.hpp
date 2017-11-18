@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <cassert>
 #include "LinkedList.hpp"
 using namespace std;
 
@@ -16,7 +17,7 @@ private:
     fstream file;
     
 public:
-    BiFile(int s, char *st);        
+    BiFile(int s, const char *st);        
 
     ~BiFile();
         

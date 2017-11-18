@@ -4,11 +4,17 @@
 #include "BinFile.hpp"
 using namespace std;
 
-BiFile::BiFile(int s, char *st) {
+BiFile::BiFile(int s, const char *st) {
     size = s;
-    FILE * F = fopen(st, "wb+");
-    fclose(F);
+    // FILE * F = fopen(st, "wb+");
+    // fclose(F);
+    file.open(st, std::fstream::out);
+    file.close();
+    
     file.open(st, std::fstream::in | std::fstream::out | std::fstream::binary);
+
+    assert(file.is_open());
+    
     aux = new char[1];
     aux[0] = -1;
     for (int j = 0; j < s; j++)
