@@ -68,7 +68,7 @@ struct action {
     int t;
     int process_id;
     int acess_id;
-    action(int TYPE = 0, int T = 0.0, int PID = -1, int AID = -1) {
+    action(int TYPE = 0, int T = 0, int PID = -1, int AID = -1) {
 	type = TYPE;
 	t = T;
 	process_id = PID;

@@ -43,7 +43,7 @@ trace * load_file(string file_name) {
     ifstream trace_file (file_name.c_str());
     string line;
     vector<string> objs;
-    trace * ret = (trace *) malloc(sizeof(trace));
+    trace * ret = new trace;
     getline(trace_file, line);
     objs = stringToVec(line);
 
@@ -53,19 +53,21 @@ trace * load_file(string file_name) {
     ret->virt  = atoi(objs[1].c_str());
     ret->s     = atoi(objs[2].c_str());
     ret->p     = atoi(objs[3].c_str());
+
     
     while (getline(trace_file, line)) {
 	objs = stringToVec(line);
 	if ((int)objs.size() == 2) {
 	    if (objs[1] == "COMPACTAR") {
-		action compact = action(4, atof(objs[1].c_str()), -1, -1);
-		ret->action_queue.push(compact);
+		action A = action(4, atoi(objs[0].c_str()), -1, -1);
+		ret->action_queue.push(A);
 	    }
+	    
 	} else {
 	    process p;
 	    int PID = ret->process_vec.size();
-	    p.t0 = atof(objs[0].c_str());
-	    p.tf = atof(objs[1].c_str());
+	    p.t0 = atoi(objs[0].c_str());
+	    p.tf = atoi(objs[1].c_str());
 	    p.b  = atoi(objs[2].c_str());
 	    p.name = objs[3];
 	    action initialize = action(2, p.t0, PID, -1);
@@ -75,7 +77,7 @@ trace * load_file(string file_name) {
 		acess A;
 		int AID = p.mem_acess.size();
 		
-		A = acess(atoi(objs[i].c_str()), atof(objs[i + 1].c_str()));
+		A = acess(atoi(objs[i].c_str()), atoi(objs[i + 1].c_str()));
 		ret->action_queue.push(action(1, A.t, PID, AID)); 
 		p.mem_acess.push_back(A);
 	    }
@@ -123,7 +125,6 @@ void simulate(trace * T, int mem_type, int pag_type, int start_time, int end_tim
 	P = new LRU4(*RealMem, *VirtualMem, T->total, T->virt, T->s, T->p);
     }
 
-    cerr << "Cheguei aqui " << endl;
     
     for (int cur_time = 0; !(T->action_queue.empty()); cur_time++) {
 	// Tempo atual eh cur_time
@@ -135,7 +136,10 @@ void simulate(trace * T, int mem_type, int pag_type, int start_time, int end_tim
 	while((!(T->action_queue.empty())) && (T->action_queue.top()).t == cur_time) {
 	    action A = T->action_queue.top();
 	    T->action_queue.pop();
-		
+
+	    cerr << "ACAO type: " << A.type << " t: " << A.t << " PID: " << A.process_id << " AID: " << A.acess_id << endl;
+
+	    
 	    if (A.type == 1) {
 		// Acessa a memória na paginação
 		process cur_process = T->process_vec[A.process_id];
@@ -174,31 +178,35 @@ int main(int argc, char * argv[]) {
 
     while (true) {
 	string s;
+	vector<string> vs;
 	cout << "Comando: ";
 	fflush(stdout);
-	cin >> s;
+	getline(cin, s);
+	vs = stringToVec(s);
+	s = vs[0];
 	if (s == "carrega") {
 	    string file_name;
-	    cin >> file_name;
+	    file_name = vs[1];
 	    cur_trace = load_file(file_name);
 	    cout << "Arquivo " << file_name << " carregado" << endl;
 	} else if (s == "espaco") {
 	    // Change de algortihm that manages memory
-	    cin >> mem_type;
+	    mem_type = atoi(vs[1].c_str());
 	    if (mem_type < 1 || mem_type > 3) {
 		cout << "O tipo informado nao eh valido" << endl;
 	    }
 	    else cout << "Algortimo de gerenciamento de memoria " << mem_type << " escolhido" << endl;
 	} else if (s == "substitui") {
 	    // Change de algorithm that manages pages
-	    cin >> pag_type;
+	    pag_type = atoi(vs[1].c_str());
 	    if (pag_type < 1 || pag_type > 4) {
 		cout << "O tipo informado nao eh valido" << endl;
 	    }
 	    else cout << "Algortimo de substituicao de pagina " << pag_type << " escolhido" << endl;
 	} else if (s == "executa") {
 	    int start_time, end_time;
-	    cin >> start_time >> end_time;
+	    start_time = atoi(vs[1].c_str());
+	    end_time   = atoi(vs[2].c_str());
 	    if (mem_type == -1 || pag_type == -1)
 		cerr << "Voce deve informar o tipo de simulador a ser executado" << endl;
 	    else {
