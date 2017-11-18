@@ -53,8 +53,8 @@ struct process {
 
 /*
   Types:
-  1 - Memory Acess 
-  2 - Process Initialization
+  1 - Process Initialization
+  2 - Memory Acess 
   3 - Process Finalization
   4 - Compact
      
@@ -76,10 +76,18 @@ struct action {
     }
     
     bool operator < (const action ot) const {
+	if (t == ot.t) {
+	    return type < ot.type;
+	}
+	
 	return t < ot.t;
     }
 
     bool operator > (const action ot) const {
+	if (t == ot.t) {
+	    return type < ot.type;
+	}
+
 	return t > ot.t;
     }
 };

@@ -25,13 +25,13 @@ vector<string> stringToVec(string s) {
     vector<string> ret;
     string r = "";
     for (int i = 0; i < (int)s.size(); i++) {
-    if (!isspace(s[i])) r += s[i];
-    else {
-        if (r != "") {
-        ret.push_back(r);
-        r = "";
-        }
-    }
+	if (!isspace(s[i])) r += s[i];
+	else {
+	    if (r != "") {
+		ret.push_back(r);
+		r = "";
+	    }
+	}
     }
 
     if (r != "") ret.push_back(r);
@@ -56,35 +56,35 @@ trace * load_file(string file_name) {
 
     
     while (getline(trace_file, line)) {
-    objs = stringToVec(line);
-    if ((int)objs.size() == 2) {
-        if (objs[1] == "COMPACTAR") {
-        action A = action(4, atoi(objs[0].c_str()), -1, -1);
-        ret->action_queue.push(A);
-        }
+	objs = stringToVec(line);
+	if ((int)objs.size() == 2) {
+	    if (objs[1] == "COMPACTAR") {
+		action A = action(4, atoi(objs[0].c_str()), -1, -1);
+		ret->action_queue.push(A);
+	    }
         
-    } else {
-        process p;
-        int PID = ret->process_vec.size();
-        p.t0 = atoi(objs[0].c_str());
-        p.tf = atoi(objs[1].c_str());
-        p.b  = atoi(objs[2].c_str());
-        p.name = objs[3];
-        action initialize = action(2, p.t0, PID, -1);
-        action finalize   = action(3, p.tf, PID, -1);
+	} else {
+	    process p;
+	    int PID = ret->process_vec.size();
+	    p.t0 = atoi(objs[0].c_str());
+	    p.tf = atoi(objs[1].c_str());
+	    p.b  = atoi(objs[2].c_str());
+	    p.name = objs[3];
+	    action initialize = action(1, p.t0, PID, -1);
+	    action finalize   = action(3, p.tf, PID, -1);
         
-        for (int i = 4; i < (int)objs.size(); i += 2) {
-        acess A;
-        int AID = p.mem_acess.size();
+	    for (int i = 4; i < (int)objs.size(); i += 2) {
+		acess A;
+		int AID = p.mem_acess.size();
         
-        A = acess(atoi(objs[i].c_str()), atoi(objs[i + 1].c_str()));
-        ret->action_queue.push(action(1, A.t, PID, AID)); 
-        p.mem_acess.push_back(A);
-        }
-        ret->process_vec.push_back(p);
-        ret->action_queue.push(initialize);
-        ret->action_queue.push(finalize);
-    }   
+		A = acess(atoi(objs[i].c_str()), atoi(objs[i + 1].c_str()));
+		ret->action_queue.push(action(2, A.t, PID, AID)); 
+		p.mem_acess.push_back(A);
+	    }
+	    ret->process_vec.push_back(p);
+	    ret->action_queue.push(initialize);
+	    ret->action_queue.push(finalize);
+	}   
     }
     trace_file.close();
     
@@ -104,60 +104,60 @@ void simulate(trace * T, int mem_type, int pag_type, int print_time) {
     int *pageMap = new int[T->virt/T->p];
 
     if (mem_type == 1) {
-    M = new BestFit(*VirtualMem, T->total, T->virt, T->s, T->p);
+	M = new BestFit(*VirtualMem, T->total, T->virt, T->s, T->p);
     } else if (mem_type == 2) {
-    // Worst Fit
+	// Worst Fit
     } else {
-    // Quick Fit
+	// Quick Fit
     }
 
     if (pag_type == 1) {
-    // Optimal
+	// Optimal
     } else if (pag_type == 2) {
-    P = new Fifo(*RealMem, *VirtualMem, T->total, T->virt, T->s, T->p);
+	P = new Fifo(*RealMem, *VirtualMem, T->total, T->virt, T->s, T->p);
     } else if (pag_type == 3) {
-    P = new LRU2(*RealMem, *VirtualMem, T->total, T->virt, T->s, T->p);
+	P = new LRU2(*RealMem, *VirtualMem, T->total, T->virt, T->s, T->p);
     } else {
-    P = new LRU4(*RealMem, *VirtualMem, T->total, T->virt, T->s, T->p);
+	P = new LRU4(*RealMem, *VirtualMem, T->total, T->virt, T->s, T->p);
     }
 
     
     for (int cur_time = 0; !(T->action_queue.empty()); cur_time++) {
-    // Tempo atual eh cur_time
+	// Tempo atual eh cur_time
 
-    if ((cur_time%print_time) == 0) {
-        //printa estado
-    } 
+	if ((cur_time%print_time) == 0) {
+	    //printa estado
+	} 
     
-    while((!(T->action_queue.empty())) && (T->action_queue.top()).t == cur_time) {
-        action A = T->action_queue.top();
-        T->action_queue.pop();
+	while((!(T->action_queue.empty())) && (T->action_queue.top()).t == cur_time) {
+	    action A = T->action_queue.top();
+	    T->action_queue.pop();
 
-        cerr << "ACAO type: " << A.type << " t: " << A.t << " PID: " << A.process_id << " AID: " << A.acess_id << endl;
+	    cerr << "ACAO type: " << A.type << " t: " << A.t << " PID: " << A.process_id << " AID: " << A.acess_id << endl;
 
         
-        if (A.type == 1) {
-        // Acessa a memória na paginação
-            process cur_process = T->process_vec[A.process_id];
-            acess cur_acess = cur_process.mem_acess[A.acess_id];
-            P->access(cur_acess.pos);       
-        } else if (A.type == 2) {
-        // Inicializa um processo
-            process cur_process = T->process_vec[A.process_id];
-            M->insert(A.process_id, cur_process.b);
-        } else if (A.type == 3) {
-        // Finaliza um processo
-            P->remove(M->translate(A.process_id, 0), M->translate(A.process_id, M->size(A.process_id) - 1));
-            M->remove(A.process_id);
-        } else if (A.type == 4) {
-        // Compacta
-            M->compact(pageMap);
-            P->compact(pageMap);
-        } else {
-            cerr << "Tipo de acao nao valido " << A.type << endl;
-            exit(-1);
-        }   
-    }
+	    if (A.type == 1) {
+		// Inicializa um processo
+		process cur_process = T->process_vec[A.process_id];
+		M->insert(A.process_id, cur_process.b);
+	    } else if (A.type == 2) {
+		// Acessa a memória na paginação
+		process cur_process = T->process_vec[A.process_id];
+		acess cur_acess = cur_process.mem_acess[A.acess_id];
+		P->access(cur_acess.pos);       
+	    } else if (A.type == 3) {
+		// Finaliza um processo
+		P->remove(M->translate(A.process_id, 0), M->translate(A.process_id, M->size(A.process_id) - 1));
+		M->remove(A.process_id);
+	    } else if (A.type == 4) {
+		// Compacta
+		M->compact(pageMap);
+		P->compact(pageMap);
+	    } else {
+		cerr << "Tipo de acao nao valido " << A.type << endl;
+		exit(-1);
+	    }   
+	}
     }   
 }
 
