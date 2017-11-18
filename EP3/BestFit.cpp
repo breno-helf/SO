@@ -69,7 +69,7 @@ bool BestFit::insert(char pid, int b) {
 void BestFit::remove(char pid) {
     node *curr;
     curr = l->head;
-    while (curr != NULL && curr->pid != pid) // <-- Atualmente esta linha da segfault 
+    while (curr != NULL && curr->pid != pid)
         curr = curr->next;
     if (curr == NULL) {
         cout << "nao achou o processo de pid " << (short) pid << "\n";
@@ -140,16 +140,18 @@ void BestFit::compact(int *pageMap) {
 int BestFit::translate(char pid, int p) {
     node *curr;
     curr = l->head;
-    while (curr->pid != pid)
-    curr = curr->next;
+    while (curr != NULL && curr->pid != pid)
+        curr = curr->next;
+    if (curr == NULL) return -1;
     return (curr->pos + p);
 }
         
 int BestFit::size(char pid) {
     node *curr;
     curr = l->head;
-    while (curr->pid != pid)
+    while (curr != NULL && curr->pid != pid)
         curr = curr->next;
+    if (curr == NULL) return -1;
     return (curr->size);
 }
 /*
