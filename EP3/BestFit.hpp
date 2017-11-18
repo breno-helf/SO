@@ -27,6 +27,7 @@ public:
     
     int translate(char pid, int p);
     
+    int size(char pid);
 };
 
 #endif

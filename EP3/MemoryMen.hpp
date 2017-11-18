@@ -34,6 +34,7 @@ public:
     
     virtual int translate(char pid, int p);
     
+    virtual int size(char pid);
 };
 
 #endif

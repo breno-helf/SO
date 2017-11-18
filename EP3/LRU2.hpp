@@ -30,6 +30,10 @@ public:
     void access(int pos);
     
     void compact(int *pageMap);
+    
+    void print();
+    
+    void remove(int begPos, int endPos);
 };
 
 #endif

@@ -24,6 +24,10 @@ public:
     virtual void access(int pos);
     
     virtual void compact(int *pageMap);
+    
+    virtual void print();
+    
+    virtual void remove(int begPos, int endPos);
 };
 
 #endif

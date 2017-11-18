@@ -46,3 +46,7 @@ void MemoryMen::compact(int *pageMap) {
 int MemoryMen::translate(char pid, int p) {
     return 0;
 }
+
+int MemoryMen::size(char pid) {
+    return 0;
+}

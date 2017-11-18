@@ -19,3 +19,11 @@ void PageMen::access(int pos) {
 void PageMen::compact(int *pageMap) {
     return;
 }
+
+void PageMen::print() {
+    return;
+}
+
+void PageMen::remove(int begPos, int endPos) {
+    return;
+}
