@@ -139,7 +139,14 @@ void simulate(trace * T, int mem_type, int pag_type, int print_time) {
 	    if (A.type == 1) {
 		// Inicializa um processo
 		process cur_process = T->process_vec[A.process_id];
-		M->insert(A.process_id, cur_process.b);
+		if (!M->insert(A.process_id, cur_process.b)) {
+            M->compact(pageMap);
+            P->compact(pageMap);
+            if (!M->insert(A.process_id, cur_process.b)) {
+                cerr << "nao ha memoria suficiente para simular\n";
+                return;
+            }
+        }
 	    } else if (A.type == 2) {
 		// Acessa a memória na paginação
 		process cur_process = T->process_vec[A.process_id];
