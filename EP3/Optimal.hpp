@@ -5,22 +5,30 @@
 #define OPTIMAL_H
 
 #include "PageMen.hpp"
+#include "trace.hpp"
+#include <map>
+#include <set>
+#include <vector>
 using namespace std;
 
 
 class Optimal : public PageMen {
 private:
-    int pointer;
-    int *queue;
-    set <int> map;
-        
+    vector<pair<int, int> > queue;
+    set <int> MAP;
+    vector<process> vec;
+    map<int, int> M;
+    
 public:
-    Optimal(BiFile &realMem, BiFile &virMem, int total, int virt, int s, int p);        
+    Optimal(BiFile &realMem, BiFile &virMem, int total, int virt, int s, int p, trace * T);        
     ~Optimal();
     
-    void access(int pos);
+    int access(int pos);
     
     void compact(int *pageMap);
+
+    void remove(int begPos, int endPos);
+
 };
 
 #endif

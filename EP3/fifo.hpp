@@ -16,7 +16,7 @@ using namespace std;
 
 class Fifo : public PageMen {
 private:
-    std::vector<pair<int, int> > queue;
+    vector<pair<int, int> > queue;
     set <int> map;
         
 public:

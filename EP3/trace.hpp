@@ -1,6 +1,9 @@
 // Breno Helfstein Moura          NUSP: 9790972
 // Lucas Daher                    NUSP: 8991769
 
+#ifndef TRACE_H
+#define TRACE_H
+
 #include <iostream>
 #include <queue>
 #include <vector>
@@ -100,3 +103,5 @@ struct trace {
     priority_queue<action, vector<action>, greater<action> > action_queue;
     
 };
+
+#endif

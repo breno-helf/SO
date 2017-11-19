@@ -13,6 +13,7 @@
 #include "trace.hpp"
 #include "BestFit.hpp"
 #include "WorstFit.hpp"
+#include "QuickFit.hpp"
 #include "MemoryMen.hpp"
 #include "PageMen.hpp"
 #include "LRU2.hpp"
@@ -20,6 +21,7 @@
 #include "fifo.hpp"
 #include "LinkedList.hpp"
 #include "BinFile.hpp"
+#include "Optimal.hpp"
 using namespace std;
 
 vector<string> stringToVec(string s) {
@@ -118,11 +120,11 @@ void simulate(trace * T, int mem_type, int pag_type, int print_time) {
     } else if (mem_type == 2) {
 	M = new WorstFit(*VirtualMem, T->total, T->virt, T->s, T->p);
     } else {
-	// Quick Fit
+	M = new QuickFit(*VirtualMem, T->total, T->virt, T->s, T->p, T);
     }
 
     if (pag_type == 1) {
-	// Optimal
+	P = new Optimal(*RealMem, *VirtualMem, T->total, T->virt, T->s, T->p, T);
     } else if (pag_type == 2) {
 	P = new Fifo(*RealMem, *VirtualMem, T->total, T->virt, T->s, T->p);
     } else if (pag_type == 3) {
@@ -187,11 +189,13 @@ void simulate(trace * T, int mem_type, int pag_type, int print_time) {
 	}
     }
     cout << "processo finalizado no instante " << cur_time << "\n";
-	cout << "memoria virtual:\n";
-	VirtualMem->print();
-	cout << "memoria fisica:\n";
-	RealMem->print();
-	cout << "número de pagefaults: " << pageF << "\n";
+    /*
+    cout << "memoria virtual:\n";
+    VirtualMem->print();
+    cout << "memoria fisica:\n";
+    RealMem->print();
+    */
+    cout << "número de pagefaults: " << pageF << "\n";
 }
 
 int main(int argc, char * argv[]) {

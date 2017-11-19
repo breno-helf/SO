@@ -1,3 +1,4 @@
+
 from random import randint
 from random import shuffle
 from random import choice
@@ -7,8 +8,8 @@ START_TIME = 0
 
 total = 60
 virtual = 120
-s = 4
-p = 2
+s = 2
+p = 4
 print(str(total) + " " + str(virtual) + " " + str(s) + " " + str(p))
 
 process_num = 10

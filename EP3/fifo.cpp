@@ -21,21 +21,21 @@ Fifo::~Fifo() {
 int Fifo::access(int pos) {
     int page = pos/pSize, pointer;
     if (map.find(page) == map.end()) {
-	    for (pointer = 0; pointer < pNum && queue[pointer].first != -1; pointer++);
-	    if (pointer == pNum) {
-	        map.erase(queue[0].first);
-	        queue.push_back(make_pair(page, queue[0].second));
-	        queue.erase(queue.begin());
-	    }
-	    else {
-	        queue.push_back(make_pair(page, queue[pointer].second));
-	        queue.erase(queue.begin() + pointer);
-	    }
-	    fis->copy(vir, page*pSize, pSize, queue[pNum - 1].second*pSize);
-	    map.insert(page);
-	    return 1;
+	for (pointer = 0; pointer < pNum && queue[pointer].first != -1; pointer++);
+	if (pointer == pNum) {
+	    map.erase(queue[0].first);
+	    queue.push_back(make_pair(page, queue[0].second));
+	    queue.erase(queue.begin());
 	}
-	return 0;
+	else {
+	    queue.push_back(make_pair(page, queue[pointer].second));
+	    queue.erase(queue.begin() + pointer);
+	}
+	fis->copy(vir, page*pSize, pSize, queue[pNum - 1].second*pSize);
+	map.insert(page);
+	return 1;
+    }
+    return 0;
 }
 
 void Fifo::compact(int *pageMap) {
@@ -60,7 +60,8 @@ void Fifo::remove(int begPos, int endPos) {
         if (queue[i].first >= begPage && queue[i].first <= endPage) {
             fis->write(queue[i].second*pSize, pSize, -1);
             queue[i].first = -1;
-            map.erase(queue[i].first);
+            if (map.find(queue[i].first) != map.end())
+		map.erase(queue[i].first);
         }
 }
 

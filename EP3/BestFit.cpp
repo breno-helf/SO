@@ -36,17 +36,17 @@ bool BestFit::insert(char pid, int b) {
     node *curr;
     curr = best = l->head;
     while (curr != NULL) {
-    if (curr->pid == -1) {
-        if (best->pid != -1) {
-        best = curr;
-        }
-        else {
-        if (curr->size >= s && curr->size < best->size) {
-            best = curr;
-        }
-        }
-    }
-    curr = curr->next;
+	if (curr->pid == -1) {
+	    if (best->pid != -1) {
+		best = curr;
+	    }
+	    else {
+		if (curr->size >= s && curr->size < best->size) {
+		    best = curr;
+		}
+	    }
+	}
+	curr = curr->next;
     }
     if (best->size < size) return false;
     int dif = best->size - size;
@@ -54,13 +54,13 @@ bool BestFit::insert(char pid, int b) {
     best->size = size;
     best->IDsize = pidSize;
     if (dif > 0) {
-    node *n = new node;
-    n->pid = -1;
-    n->size = dif;
-    n->IDsize = 0;
-    n->next = best->next;
-    n->pos = best->pos + size;
-    best->next = n;
+	node *n = new node;
+	n->pid = -1;
+	n->size = dif;
+	n->IDsize = 0;
+	n->next = best->next;
+	n->pos = best->pos + size;
+	best->next = n;
     }
     file->write(best->pos, best->IDsize, best->pid);
     file->write(best->pos + best->IDsize, best->size - best->IDsize, -1);
