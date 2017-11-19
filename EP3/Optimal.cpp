@@ -39,9 +39,9 @@ int Optimal::access(int pos) {
 	int mn = 1000000;
 	int id = -1;
 	for (int i = 0; i < tam; i++) {
-	    if (M[queue[i].first] < mn) {
-		id = queue[i].second;
-		mn = min(M[queue[i].first], mn);
+	    if (M[queue[i].second] < mn) {
+		id = i;
+		mn = min(M[queue[i].second], mn);
 	    }
 	}
 
@@ -54,7 +54,7 @@ int Optimal::access(int pos) {
 	    queue.erase(queue.begin() + id);
 	}
 	
-	fis->copy(vir, page*pSize, pSize, queue[pNum - 1].second*pSize);
+	fis->copy(vir, page * pSize, pSize, queue[pNum - 1].second*pSize);
 	MAP.insert(page);
 	return 1;
     }

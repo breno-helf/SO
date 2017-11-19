@@ -9,7 +9,8 @@
 #include <fstream>
 #include <cstdio>
 #include <cstdlib>
-#include <assert.h>
+#include <cassert>
+#include <ctime>
 #include "trace.hpp"
 #include "BestFit.hpp"
 #include "WorstFit.hpp"
