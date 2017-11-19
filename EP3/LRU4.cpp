@@ -12,7 +12,7 @@ using namespace std;
 LRU4::LRU4(BiFile &realMem, BiFile &virMem, int total, int virt, int s, int p) {
     fis = &realMem; vir = &virMem;
     tSize = total; vSize = virt; this->s = s; pSize = p;
-    pNum = vSize/pSize;
+    pNum = tSize/pSize;
     list = new pair<int, pair<int, unsigned long> >[pNum];
     for (int i = 0; i < pNum; i++) {
 	list[i].first = -1;
@@ -27,13 +27,13 @@ LRU4::~LRU4() {
     delete[] list;
 }
         
-void LRU4::access(int pos) {
+int LRU4::access(int pos) {
     int page = pos/pSize;
     int p = 0;
     for (int i = 0; i < pNum; i++) {
 	if (list[i].first == page) {
 	    list[i].second.first = 1;
-	    return;
+	    return 0;
 	}
 	else if (list[i].first == -1) p = i;
 	else {
@@ -44,8 +44,9 @@ void LRU4::access(int pos) {
 	}
     }
     list[p].first = page;
-    vir->copy(fis, page*pSize, pSize, p*pSize);
+    fis->copy(vir, page*pSize, pSize, p*pSize);
     list[p].second.first = 1;
+    return 1;
 }
         
 void LRU4::updateCount() {
@@ -63,6 +64,23 @@ void LRU4::compact(int *pageMap) {
             list[i].first = pageMap[list[i].first];
 }
 
+void LRU4::print() {
+    for (int i = 0; i < pNum; i++)
+        cout << list[i].first << " ";
+    cout << "\n";
+}
+
+void LRU4::remove(int begPos, int endPos) {
+    if (begPos == -1 || endPos == -1) return;
+    int begPage = begPos/pSize, endPage = endPos/pSize;
+    for (int i = 0; i < pNum; i++)
+        if (list[i].first >= begPage && list[i].first <= endPage) {
+            fis->write(i*pSize, pSize, -1);
+            list[i].first = -1;
+            list[i].second.first = 0;
+            list[i].second.second = 0;
+        }
+}
 
 /*
   int main() {

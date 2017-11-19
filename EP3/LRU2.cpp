@@ -38,7 +38,7 @@ LRU2::~LRU2() {
     delete[] matrix;
 }
         
-void LRU2::access(int pos) {
+int LRU2::access(int pos) {
     int page = pos/pSize;
     int p = 0;
     for (int i = 0; i < pNum; i++) {
@@ -47,7 +47,7 @@ void LRU2::access(int pos) {
                 matrix[j][i] = 0;
                 matrix[i][j + 1] = 1;
             }
-        return;
+        return 0;
         }
         else if (matrix[i][0] == -1) p = i;
         else {
@@ -62,6 +62,7 @@ void LRU2::access(int pos) {
     }
     matrix[p][0] = page;
     fis->copy(vir, page*pSize, pSize, p*pSize);
+    return 1;
 }
 
 void LRU2::compact(int *pageMap) {

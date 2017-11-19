@@ -4,44 +4,63 @@
 #include "fifo.hpp"
 using namespace std;
 
-/*struct page {
-  char pid;
-  int beg;
-  };*/
-
 Fifo::Fifo(BiFile &realMem, BiFile &virMem, int total, int virt, int s, int p) {
     fis = &realMem; vir = &virMem;
     tSize = total; vSize = virt; this->s = s; pSize = p;
     pNum = tSize/pSize;
-    queue = new int[pNum];
+    queue = vector<pair<int, int> >(pNum);
     for (int i = 0; i < pNum; i++) {
-        queue[i] = -1;
+        queue[i].first = -1;
+        queue[i].second = i;
     }
-    pointer = 0;
 }
         
 Fifo::~Fifo() {
-    delete queue;
 }
         
-void Fifo::access(int pos) {
-    int page = pos/pSize;
+int Fifo::access(int pos) {
+    int page = pos/pSize, pointer;
     if (map.find(page) == map.end()) {
-	if (queue[pointer] != -1)
-	    map.erase(queue[pointer]);
-	queue[pointer] = page;
-	vir->copy(fis, page*pSize, pSize, pointer*pSize);
-	pointer = (pointer + 1) %pNum;
-	map.insert(page);
-    }
+	    for (pointer = 0; pointer < pNum && queue[pointer].first != -1; pointer++);
+	    if (pointer == pNum) {
+	        map.erase(queue[0].first);
+	        queue.push_back(make_pair(page, queue[0].second));
+	        queue.erase(queue.begin());
+	    }
+	    else {
+	        queue.push_back(make_pair(page, queue[pointer].second));
+	        queue.erase(queue.begin() + pointer);
+	    }
+	    fis->copy(vir, page*pSize, pSize, queue[pNum - 1].second*pSize);
+	    map.insert(page);
+	    return 1;
+	}
+	return 0;
 }
 
 void Fifo::compact(int *pageMap) {
     for (int i = 0; i < pNum; i++)
-        if (queue[i] != -1) {
-            map.erase(queue[i]);
-            queue[i] = pageMap[queue[i]];
-            map.insert(queue[i]);
+        if (queue[i].first != -1) {
+            map.erase(queue[i].first);
+            queue[i].first = pageMap[queue[i].first];
+            map.insert(queue[i].first);
+        }
+}
+
+void Fifo::print() {
+    for (unsigned int i = 0; i < queue.size(); i++)
+        cout << queue[i].first << "/" << queue[i].second << " ";
+    cout << "\n";
+}
+
+void Fifo::remove(int begPos, int endPos) {
+    if (begPos == -1 || endPos == -1) return;
+    int begPage = begPos/pSize, endPage = endPos/pSize;
+    for (int i = 0; i < pNum; i++)
+        if (queue[i].first >= begPage && queue[i].first <= endPage) {
+            fis->write(queue[i].second*pSize, pSize, -1);
+            queue[i].first = -1;
+            map.erase(queue[i].first);
         }
 }
 

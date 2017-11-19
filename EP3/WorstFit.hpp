@@ -6,6 +6,8 @@
 
 #include <iostream>
 #include <fstream>
+#include "LinkedList.hpp"
+#include "BinFile.hpp"
 #include "MemoryMen.hpp"
 using namespace std;
 
@@ -25,6 +27,7 @@ public:
     
     int translate(char pid, int p);
     
+    int size(char pid);
 };
 
 #endif

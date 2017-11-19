@@ -12,6 +12,7 @@
 #include <assert.h>
 #include "trace.hpp"
 #include "BestFit.hpp"
+#include "WorstFit.hpp"
 #include "MemoryMen.hpp"
 #include "PageMen.hpp"
 #include "LRU2.hpp"
@@ -110,11 +111,12 @@ void simulate(trace * T, int mem_type, int pag_type, int print_time) {
     PageMen * P;
     BiFile * RealMem = new BiFile(T->total, real_dir.c_str());
     int *pageMap = new int[T->virt/T->p];
+    int cur_time, pageF = 0;
 
     if (mem_type == 1) {
 	M = new BestFit(*VirtualMem, T->total, T->virt, T->s, T->p);
     } else if (mem_type == 2) {
-	// Worst Fit
+	M = new WorstFit(*VirtualMem, T->total, T->virt, T->s, T->p);
     } else {
 	// Quick Fit
     }
@@ -130,12 +132,19 @@ void simulate(trace * T, int mem_type, int pag_type, int print_time) {
     }
 
     
-    for (int cur_time = 0; !(T->action_queue.empty()); cur_time++) {
+    for (cur_time = 0; !(T->action_queue.empty()); cur_time++) {
 	// Tempo atual eh cur_time
 
 	if ((cur_time%print_time) == 0) {
 	    //printa estado
-	} 
+	    cout << "(inicio do) instante " << cur_time << "\n";
+	    cout << "memoria virtual:\n";
+	    VirtualMem->print();
+	    cout << "memoria fisica:\n";
+	    RealMem->print();
+	}
+	
+	P->updateCount();
     
 	while((!(T->action_queue.empty())) && (T->action_queue.top()).t == cur_time) {
 	    action A = T->action_queue.top();
@@ -143,9 +152,9 @@ void simulate(trace * T, int mem_type, int pag_type, int print_time) {
 	    
 	    int PID = A.process_id;
 	    
-	    cerr << "ACAO type: " << A.type << " t: " << A.t << " PID: " << A.process_id << " AID: " << A.acess_id;
+	    /*cerr << "ACAO type: " << A.type << " t: " << A.t << " PID: " << A.process_id << " AID: " << A.acess_id;
 	    if (PID != -1) cerr << " -- Nome: " << T->process_vec[PID].name;
-	    cerr << endl;
+	    cerr << endl;*/
         
 	    if (A.type == 1) {
 		// Inicializa um processo
@@ -162,7 +171,7 @@ void simulate(trace * T, int mem_type, int pag_type, int print_time) {
 		// Acessa a memória na paginação
 		process cur_process = T->process_vec[A.process_id];
 		acess cur_acess = cur_process.mem_acess[A.acess_id];
-		P->access(cur_acess.pos);       
+		pageF += P->access(M->translate(A.process_id, cur_acess.pos));       
 	    } else if (A.type == 3) {
 		// Finaliza um processo
 		P->remove(M->translate(A.process_id, 0), M->translate(A.process_id, M->size(A.process_id) - 1));
@@ -174,9 +183,15 @@ void simulate(trace * T, int mem_type, int pag_type, int print_time) {
 	    } else {
 		cerr << "Tipo de acao nao valido " << A.type << endl;
 		exit(-1);
-	    }   
+	    }
 	}
-    }   
+    }
+    cout << "processo finalizado no instante " << cur_time << "\n";
+	cout << "memoria virtual:\n";
+	VirtualMem->print();
+	cout << "memoria fisica:\n";
+	RealMem->print();
+	cout << "número de pagefaults: " << pageF << "\n";
 }
 
 int main(int argc, char * argv[]) {
@@ -185,10 +200,13 @@ int main(int argc, char * argv[]) {
     int mem_type = -1;
     int pag_type = -1;
     
-    
+    /*
     cur_trace = load_file("trace-file.txt");
-    simulate(cur_trace, 1, 2, 3);
-    
+    simulate(cur_trace, 1, 2, 50);
+    //simulate(cur_trace, 1, 3, 50);
+    //simulate(cur_trace, 1, 4, 50);
+    return 0;
+    */
     
     cout << "Para interagir com o prompt voce deve usar os comandos: " << endl;
     cout << "    carrega <arquivo>\n    espaco <num>\n    substitui <num>\n    executa <intervalo>\n    sai" << endl;

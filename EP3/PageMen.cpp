@@ -12,8 +12,8 @@ PageMen::~PageMen() {
     return;
 }
     
-void PageMen::access(int pos) {
-    return;
+int PageMen::access(int pos) {
+    return 0;
 }
 
 void PageMen::compact(int *pageMap) {
@@ -25,5 +25,9 @@ void PageMen::print() {
 }
 
 void PageMen::remove(int begPos, int endPos) {
+    return;
+}
+
+void PageMen::updateCount() {
     return;
 }
