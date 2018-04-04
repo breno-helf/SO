@@ -1,0 +1,8 @@
+Best Fit = 0.0017056
+Worst Fit = 0.0024982
+Quick Fit = 0.0010914
+
+Optimal = 10
+FIFO = 10
+LRU2 = 14
+LRU4 = 14

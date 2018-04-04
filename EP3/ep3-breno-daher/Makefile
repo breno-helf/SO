@@ -2,7 +2,7 @@
 # Lucas Daher                 NUSP: 8991769
 
 FLAGS = -Wall -pedantic -g
-OBJS = ep3.o trace.hpp
+OBJS = ep3.o trace.hpp BestFit.o WorstFit.o QuickFit.o BinFile.o LinkedList.o Optimal.o fifo.o LRU2.o LRU4.o MemoryMen.o PageMen.o
 EXEC = ep3
 
 .PHONY: clean
