@@ -1,2 +1,2 @@
 # MAC0442
-Eps da matéria MAC0442, Sistemas Operacionais
+Works for the MAC0442 class, Operational Systems.
